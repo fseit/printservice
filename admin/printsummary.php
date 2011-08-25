@@ -46,33 +46,32 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 		if (! $res = $this->fetchAllOrders()) {
 			ptln("<p><div class=\"notewarning\">".$this->getLang('err_nolist')."</div></p>");
 		} else {
-			$form = new Doku_Form ( array ('id' => 'delorder', 'method' => 'POST' ) );
-        	$form->addHidden('page','printservice_printsummary');
+			$form = new Doku_Form ( array ('id' => 'selectuser', 'method' => 'POST' ) );
+        	$form->addHidden('page','printservice_printpay');
 			$form->addElement ( "<table>\n<tr>" );
+			$form->addElement ( "<th colspan=\"2\">".$this->getLang('tbl_orderid')."</th>" );
 			$form->addElement ( "<th>".$this->getLang('tbl_customer')."</th>" );
-			$form->addElement ( "<th>".$this->getLang('tbl_doc')."</th>" );
-			$form->addElement ( "<th>".$this->getLang('tbl_format')."</th>" );
-			$form->addElement ( "<th>".$this->getLang('tbl_pageformat')."</th>" );
+			$form->addElement ( "<th>".$this->getLang('tbl_username')."</th>" );
 			$form->addElement ( "<th>".$this->getLang('tbl_pages')."</th>" );
 			$form->addElement ( "<th>".$this->getLang('tbl_price')."</th>" );
-			$form->addElement ( "<th>".$this->getLang('tbl_delete')."</th>" );
-			$form->addElement ( "<th>".$this->getLang('tbl_comment')."</th>" );
+			$form->addElement ( "<th>".$this->getLang('tbl_paid')."</th>" );
+			$form->addElement ( "<th>".$this->getLang('tbl_status')."</th>" );
 			$form->addElement ( "</tr>" );
 			while ( $row = $res->fetchRow () ) {
-				//f.title, o.format, o.duplex, d.pages o.preis, f.comment, o.id, d.filename, o.bezahlt
+				//p.pf_realname as realname, sum(d.pages), sum(i.price), o.id
 				$form->addElement ( "<tr>" );
-				$form->addElement ( "<td>{$row['realname']}</td>" ); //Skript
-				$form->addElement ( "<td><a href=\"{$row['filename']}\">{$row['title']}</a></td>" ); //Skript
-				$form->addElement ( "<td>" . ($row ['format'] == "a4" ? $this->getLang('tbl_a4') : $this->getLang('tbl_a5')) . "</td>" ); //Format
-				$form->addElement ( "<td>" . ($row ['duplex'] == "simplex" ? $this->getLang('tbl_simplex') : $this->getLang('tbl_duplex')) . "</td>" ); //Doppelseitig
-				$form->addElement ( "<td>{$row['pages']}</td>" ); //Preis
-				$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $row ['price'] ) . "</td>" ); //Preis
-				$form->addElement ( "<td><input type=\"checkbox\" name=\"stornoId[]\" value=\"{$row['id']}\" /></td>" ); //Stornieren
-				$form->addElement ( "<td>{$row['comment']}</td>" ); //Hinweis
+				$form->addElement ( "<td><input type=\"radio\" name=\"userselect\" value=\"".$row['username']."\" /></td>" );
+				$form->addElement ( "<td>{$row['id']}</td>" );
+				$form->addElement ( "<td>{$row['realname']}</td>" );
+				$form->addElement ( "<td>{$row['username']}</td>" );
+				$form->addElement ( "<td>{$row['pages']}</td>" ); 
+				$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $row ['price'] ) . "</td>" );
+				$form->addElement ( "<td>".($row['paymentstate']=='paid'?'Ja':'Nein')."</td>" );
+				$form->addElement ( "<td>".$this->getLang($row['deliverystate'])."</td>" );
 				$form->addElement ( "</tr>\n" );
 			}
 			$form->addElement ( "</table>" );
-			$form->addElement(form_makeButton('submit', 'admin', $this->getLang('btn_delete')));
+			$form->addElement(form_makeButton('submit', 'admin', $this->getLang('btn_show')));
 			$form->printForm();
 			
 			$res->free ();
@@ -81,7 +80,7 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 			ptln("<table>");
 			ptln("<tr><th>".$this->getLang('tbl_pages')."</th><td>{$res['pagesum']}</td></tr>");
 			ptln("<tr><th>".$this->getLang('ordersum')."</th><td>".sprintf("%.2f &euro;",$res['pricesum'])."</td></tr>");
-			ptln("<table>");
+			ptln("</table>");
 		}
         
     }
@@ -109,30 +108,40 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 	
     private function fetchOrderStats() {
         $this->mdb2->loadModule('Extended', null, false);
-    	$sql="SELECT SUM(d.pages) as pagesum, SUM(o.price) as pricesum FROM ".$this->getConf('db_prefix')."orders o JOIN ".$this->getConf('db_prefix')."documents d ON d.id = o.file WHERE o.semester=?";
+    	$sql = 'SELECT SUM(d.pages) as pagesum, SUM(i.price) as pricesum FROM '.$this->getConf('db_prefix').'orderitems i ';
+     	$sql .= 'JOIN '.$this->getConf('db_prefix').'orders o ON o.id = i.order ';
+     	$sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
+    	$sql .= 'WHERE o.semester=?';
         //echo "sql3: ". htmlentities($sql)."<br />\n";
         //$row = $this->mdb2->queryRow ($sql);
         $row = $this->mdb2->extended->getRow($sql, null, array($this->getConf('semester')), array('text'));
         if (PEAR::isError($row)) {
-            die("Query1: ".$row->getMessage());
+            die("Query2: ".$row->getMessage());
         }
         return $row;
     }
     
     private function fetchAllOrders() {
-		$sql='SELECT p.pf_realname as realname, d.title, o.format, o.duplex, d.pages, o.price, d.comment, o.id, d.filename FROM '.$this->getConf('db_prefix').'orders o JOIN '.$this->getConf('db_prefix').'documents d ON d.id = o.file JOIN phpbb_profile_fields_data p ON p.user_id = o.user WHERE o.semester=?';
+		$sql = 'SELECT p.pf_realname as realname, u.username, sum(d.pages) as pages, sum(i.price) as price, o.id, o.paymentState, o.deliveryState '; 
+		$sql .= 'FROM '.$this->getConf('db_prefix').'orders o ';
+		$sql .= 'JOIN '.$this->getConf('db_prefix').'orderitems i ON i.order = o.id ';
+		$sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
+		$sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
+		$sql .= 'JOIN phpbb_profile_fields_data p ON p.user_id = o.user ';
+		$sql .= 'WHERE o.semester=? ';
+		$sql .= 'GROUP BY o.id';
         $sqldata=$this->getConf('semester');
         $sqltype=array('text');
         //echo "sql2: ". htmlentities($sql)."<br />\n";
         //echo "sqldata2: ". htmlentities($sqldata)."<br />\n";
         $query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
     	if (PEAR::isError($query)) {
-            echo $query->getMessage();
+            echo "Prepare3: ".htmlentities($query->getMessage());
             return false;
         }
 		$res = $query->execute($sqldata);
         if (PEAR::isError($res)) {
-        	echo "Query2: ".htmlentities($this->res->getMessage())."<br>\n";
+        	echo "Exec3: ".htmlentities($this->res->getMessage())."<br>\n";
             return false;
         } elseif ($res == DB_OK or empty($res)) {
             echo $this->getLang('err_exec');
@@ -143,16 +152,17 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 
 	private function deleteOrders($ids) {
         $this->mdb2->loadModule('Extended', null, false);
-		$sql="DELETE FROM `".$this->getConf('db_prefix')."orders` WHERE id=?";
+		$sql="DELETE FROM `".$this->getConf('db_prefix')."orderitems` WHERE id=?";
         $sqltype=array('integer');
         $query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
         $this->mdb2->extended->executeMultiple($query,$ids);
 
         if (PEAR::isError($res)) {
-            die("Query1: ".$res->getMessage());
+            die("Query5: ".$res->getMessage());
         }
         return $row;
     }
 }
 
 // vim:ts=4:sw=4:et:
+?>

@@ -53,6 +53,8 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
         $this->dbConnect();
 		if($this->getConf('active')==0) {
             $renderer->doc .= "<p><div class=\"noteimportant\">".$this->getLang('note_noorder')."</div></p>";
+        } elseif($this->fetchOrderState($_SERVER['REMOTE_USER'])!='unpaid') {
+            $renderer->doc .= "<p><div class=\"noteimportant\">".$this->getLang('note_orderfinal')."</div></p>";
         } elseif(!$res=$this->fetchCurrentDocs()) {
         	$renderer->doc .= "<p><div class=\"notewarning\">".$this->getLang('err_noorder')."</div></p>";
         } else {
@@ -84,15 +86,16 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
             $form->addElement("</table>");
             $form->endFieldSet();
             $form->startFieldSet($this->getLang('tbl_chooseformat'));
-            $form->addElement("<input type=\"radio\" name=\"format\" value=\"a4\" /> A4<br />");
+            $form->addElement("<input type=\"radio\" name=\"format\" value=\"a4\" checked=\"checked\" /> A4<br />");
             $form->addElement("<input type=\"radio\" name=\"format\" value=\"a5\" /> 2-auf-1");
             $form->endFieldSet();
             $form->startFieldSet($this->getLang('tbl_choosepagemode'));
             $form->addElement("<input type=\"radio\" name=\"duplex\" value=\"simplex\" /> einseitig<br />");
-            $form->addElement("<input type=\"radio\" name=\"duplex\" value=\"duplex\" /> doppelseitig");
+            $form->addElement("<input type=\"radio\" name=\"duplex\" value=\"duplex\" checked=\"checked\" /> doppelseitig");
             $form->endFieldSet();
             $form->startFieldSet($this->getLang('tbl_sendorder'));
-            $form->addElement("<input type=\"submit\" value=\"".$this->getLang('btn_sendorder')."\" />");
+            //$form->addElement("<input type=\"submit\" value=\"".$this->getLang('btn_sendorder')."\" />");
+            $form->addElement(form_makeButton('submit', 'sendorder', $this->getLang('btn_sendorder')));
             $form->endFieldSet();
             //$form->endFieldSet();
             $renderer->doc .= $form->getForm();
@@ -142,6 +145,33 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
             return false;
         }
         return $res;
+    }	
+    
+	private function fetchOrderState($user) {
+        $this->mdb2->loadModule('Extended', null, false);
+		$sql="SELECT paymentState, deliveryState FROM ".$this->getConf('db_prefix')."orders o JOIN phpbb_users u ON u.user_id=o.user WHERE u.username=?";
+        $sqltype=array('text');
+		//echo "sql3: ". htmlentities($sql)."<br>\n";
+		$query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
+    	if (PEAR::isError($query)) {
+            echo $query->getMessage();
+            return false;
+        }
+		$res = $query->execute($user);
+        if (PEAR::isError($res)) {
+        	echo "Query3: ".htmlentities($this->res->getMessage())."<br>\n";
+            return false;
+        } elseif ($res == DB_OK or empty($res)) {
+        	echo "notfound";
+            return 'notfound';
+        }
+        $row=$res->fetchRow();
+        $res->free();
+        //echo "ds: ".$row->numRows()." ds";
+        //print_r($row);
+        if ($row['paymentstate']=='unpaid') {
+        	return "unpaid";
+        } else return $row['deliverystate'];
     }
 }
 
