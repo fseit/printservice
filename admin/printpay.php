@@ -48,7 +48,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 			}
 			//echo "pm_" . $_REQUEST ['payment'] . "_pm";
 			$this->storePayment ( $_REQUEST ['payment']+0 );
-			msg ( "Bezahlung abgeschlossen" );
+			msg ( $this->getLang ( 'msg_pais' ) );
 		}
 	
 	}

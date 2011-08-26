@@ -41,7 +41,7 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 		//msg("state: ".$state);
 		//msg("bool: ".(int)($this->getConf('active')==0)." || !(".(int)($state=='notfound')." || ".(int)($state=='unpaid').") = ".(int)($this->getConf('active')==0 || ($state=='notfound' || state=='unpaid') ));
 		if($this->getConf('active')==0 || !($state=='notfound' || $state=='unpaid') ) {
-			msg("Die Bestellung ist wirklich gesschlossen!");
+			msg($this->getLang ( 'msg_reallyclosed'));
 			return true;
 		}
 		
@@ -52,7 +52,7 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 			}
 			//msg("precreate");
 			$this->createOrder ();
-			msg ( "Bestellung wurde angelegt" );
+			msg ( $this->getLang ( 'msg_created') );
 		}
 		if ($act == 'order_send') {
 			if (is_array ( $_REQUEST ['orderId'] )) {
@@ -66,7 +66,7 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 						$add [] = ( int ) $value;
 				}
 				if($this->sendOrder ( $add )) {
-					msg ( "Skripte wurden zur Bestellung hinzugefügt");//.implode(", ",$add) );
+					msg ( $this->getLang ( 'msg_added'));//.implode(", ",$add) );
 				}
 			}
 		}

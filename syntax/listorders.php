@@ -67,7 +67,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 			$closed = ($state=='unpaid' ? false : true);
 			$form=new Doku_Form(array('id'=>'myorders'));
 			$form->addHidden('action','order_cancel');
-			$form->startFieldSet($this->getLang('yourorder').$data['semester']);
+			$form->startFieldSet($this->getLang('field_yourorder').$data['semester']);
 			$form->addElement("<table>\n<tr>");
 			$form->addElement("<th>".$this->getLang('tbl_doc')."</th>");
 			$form->addElement("<th>".$this->getLang('tbl_format')."</th>");
