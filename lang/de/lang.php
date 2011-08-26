@@ -33,6 +33,7 @@ $lang ['btn_create'] = "Neue Bestellung anlegen";
 //printorder
 $lang ['note_noorder'] = "Bestellungen sind nur zu Anfang der Vorlesungszeit m&ouml;glich. Entweder bist du zu fr&uuml;h dran, oder zu sp&auml;t. Falls du der Meinung bist, dass ein Fehler vorliegt und jetzt eigentlich Bestellungen abgegeben werden k&ouml;nnen m&uuml;ssten, schreib uns bitte eine Mail.";
 $lang ['note_orderfinal'] = "Du hast deine Bestellung bereits abgeschickt und bezahlt. Weitere Bestellungen sind nicht mehr möglich.";
+$lang ['note_notfound'] = "Bitte lege zuerst eine neue Bestellung an.";
 $lang ['err_noorder'] = "Wegen eines technischen Fehlers sind derzeit leider keine Bestellungen möglich. Falls der Fehler in 5 Minuten immer noch auftritt, gib uns bitte Bescheid.";
 $lang ['tbl_choosedoc'] = "1. Skripten zum Druck ausw&auml;hlen";
 $lang ['tbl_semester'] = "Semester";

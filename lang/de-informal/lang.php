@@ -33,18 +33,20 @@ $lang ['btn_create'] = "Neue Bestellung anlegen";
 //printorder
 $lang ['note_noorder'] = "Bestellungen sind nur zu Anfang der Vorlesungszeit m&ouml;glich. Entweder bist du zu fr&uuml;h dran, oder zu sp&auml;t. Falls du der Meinung bist, dass ein Fehler vorliegt und jetzt eigentlich Bestellungen abgegeben werden k&ouml;nnen m&uuml;ssten, schreib uns bitte eine Mail.";
 $lang ['note_orderfinal'] = "Du hast deine Bestellung bereits abgeschickt und bezahlt. Weitere Bestellungen sind nicht mehr möglich.";
+$lang ['note_notfound'] = "Bitte lege zuerst eine neue Bestellung an.";
 $lang ['err_noorder'] = "Wegen eines technischen Fehlers sind derzeit leider keine Bestellungen möglich. Falls der Fehler in 5 Minuten immer noch auftritt, gib uns bitte Bescheid.";
-$lang ['field_choosedoc'] = "1. Skripten zum Druck ausw&auml;hlen";
+$lang ['tbl_choosedoc'] = "1. Skripten zum Druck ausw&auml;hlen";
 $lang ['tbl_semester'] = "Semester";
 $lang ['tbl_lecture'] = "Fach";
 $lang ['tbl_file'] = "Datei";
 $lang ['tbl_pages'] = "Seiten";
 $lang ['tbl_baseprice'] = "Grundpreis";
 $lang ['tbl_order'] = "bestellen";
-$lang ['field_chooseformat'] = "2. Druckfomat festlegen";
-$lang ['field_choosepagemode'] = "3. Seitenmodus festlegen";
+$lang ['tbl_chooseformat'] = "2. Druckfomat festlegen";
+$lang ['tbl_choosepagemode'] = "3. Seitenmodus festlegen";
 $lang ['tbl_sendorder'] = "4. Bestellung abschicken";
 $lang ['btn_sendorder'] = "Bestellung abschicken";
+
 
 //printsummary
 $lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";

@@ -53,6 +53,8 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
         $this->dbConnect();
 		if($this->getConf('active')==0) {
             $renderer->doc .= "<p><div class=\"noteimportant\">".$this->getLang('note_noorder')."</div></p>";
+        } elseif($this->fetchOrderState($_SERVER['REMOTE_USER'])=='notfound') {
+            $renderer->doc .= "<p><div class=\"noteimportant\">".$this->getLang('note_notfound')."</div></p>";
         } elseif($this->fetchOrderState($_SERVER['REMOTE_USER'])!='unpaid') {
             $renderer->doc .= "<p><div class=\"noteimportant\">".$this->getLang('note_orderfinal')."</div></p>";
         } elseif(!$res=$this->fetchCurrentDocs()) {
@@ -148,7 +150,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
         return $res;
     }	
     
-	private function fetchOrderState($user) {
+private function fetchOrderState($user) {
         $this->mdb2->loadModule('Extended', null, false);
 		$sql="SELECT paymentState, deliveryState FROM ".$this->getConf('db_prefix')."orders o JOIN phpbb_users u ON u.user_id=o.user WHERE u.username=?";
         $sqltype=array('text');
@@ -159,11 +161,13 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
             return false;
         }
 		$res = $query->execute($user);
+		//print_r($res);
         if (PEAR::isError($res)) {
         	echo "Query3: ".htmlentities($this->res->getMessage())."<br>\n";
             return false;
-        } elseif ($res == DB_OK or empty($res)) {
-        	echo "notfound";
+        } elseif ($res->numRows()==0) {
+        	//echo "notfound";
+        	//msg("notfound");
             return 'notfound';
         }
         $row=$res->fetchRow();

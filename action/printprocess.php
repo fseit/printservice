@@ -29,11 +29,20 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
     	}
 
 		if(!in_array($_REQUEST['action'], array('order_create','order_send','order_cancel'))) {
-			msg("Unknown Action: ".$_REQUEST['action']);
+			//msg("Unknown Action: ".$_REQUEST['action']);
 			return true;
 		} else {
 			$act=$_REQUEST['action'];
+			//msg("act: ".$act);
 			$this->dbConnect();
+		}
+		
+		$state = $this->fetchOrderState($_SERVER['REMOTE_USER']);
+		//msg("state: ".$state);
+		//msg("bool: ".(int)($this->getConf('active')==0)." || !(".(int)($state=='notfound')." || ".(int)($state=='unpaid').") = ".(int)($this->getConf('active')==0 || ($state=='notfound' || state=='unpaid') ));
+		if($this->getConf('active')==0 || !($state=='notfound' || $state=='unpaid') ) {
+			msg("Die Bestellung ist wirklich gesschlossen!");
+			return true;
 		}
 		
 		if ($act == 'order_create') {
@@ -41,7 +50,8 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 				msg ( "nanana!" );
 				return false;
 			}
-			$this->createOrder ( $_SERVER['REMOTE_USER'] );
+			//msg("precreate");
+			$this->createOrder ();
 			msg ( "Bestellung wurde angelegt" );
 		}
 		if ($act == 'order_send') {
@@ -99,19 +109,22 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
         return true;
     }
     
-    private function createOrder($user) {
+    private function createOrder() {
     	//print_R($ids);
-        $this->mdb2->loadModule('Extended', null, false);
-		$sql = 'INSERT INTO '.$this->getConf('db_prefix').'orders (semester, user) VALUES (?,?)';
-		echo "sql1: ".$sql;
-		echo "sqldata1: ".print_r($ids,true);
-        $sqltype=array('integer','text');
+        //$this->mdb2->loadModule('Extended', null, false);
+		$sql = 'INSERT INTO '.$this->getConf('db_prefix').'orders (semester, user) VALUES (?,(SELECT user_id FROM phpbb_users WHERE username=?))';
+		$sqldata = array($this->getConf('semester'),$_SERVER['REMOTE_USER']);
+		//echo "sql1: ".$sql;
+		//echo "sqldata1: ".print_r($ids,true);
+		//msg( "sql1: ".$sql);
+		//msg( "sqldata1: ".print_r($ids,true));
+        $sqltype=array('text','text');
         $query = $this->mdb2->prepare($sql,$sqltype);
 		if (PEAR::isError($query)) {
             echo "Prepare1: ".$query->getMessage();
             return false;
         }
-        $res = $this->mdb2->extended->executeMultiple($query,array($this->getConf('semester'),$_SERVER['REMOTE_USER']));
+        $res = $query->execute($sqldata);
 		//print_r($res);
         if (PEAR::isError($res)) {
             die("Exec1: ".$res->getMessage());
@@ -215,7 +228,36 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 		$price = round(((int)$row['pages']*$pagecost+5)/2,-1)/50*$factor;
 		$data = array('file'=>$row['filename'], 'price'=>$price);
 		return $data;
-	}*/
+	}*/	
+	
+	private function fetchOrderState($user) {
+        $this->mdb2->loadModule('Extended', null, false);
+		$sql="SELECT paymentState, deliveryState FROM ".$this->getConf('db_prefix')."orders o JOIN phpbb_users u ON u.user_id=o.user WHERE u.username=?";
+        $sqltype=array('text');
+		//echo "sql3: ". htmlentities($sql)."<br>\n";
+		$query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
+    	if (PEAR::isError($query)) {
+            echo $query->getMessage();
+            return false;
+        }
+		$res = $query->execute($user);
+		//print_r($res);
+        if (PEAR::isError($res)) {
+        	echo "Query3: ".htmlentities($this->res->getMessage())."<br>\n";
+            return false;
+        } elseif ($res->numRows()==0) {
+        	//echo "notfound";
+        	//msg("notfound");
+            return 'notfound';
+        }
+        $row=$res->fetchRow();
+        $res->free();
+        //echo "ds: ".$row->numRows()." ds";
+        //print_r($row);
+        if ($row['paymentstate']=='unpaid') {
+        	return "unpaid";
+        } else return $row['deliverystate'];
+    }
 }
 
 // vim:ts=4:sw=4:et:

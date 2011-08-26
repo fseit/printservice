@@ -165,11 +165,13 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
             return false;
         }
 		$res = $query->execute($user);
+		//print_r($res);
         if (PEAR::isError($res)) {
         	echo "Query3: ".htmlentities($this->res->getMessage())."<br>\n";
             return false;
-        } elseif ($res == DB_OK or empty($res)) {
-        	echo "notfound";
+        } elseif ($res->numRows()==0) {
+        	//echo "notfound";
+        	//msg("notfound");
             return 'notfound';
         }
         $row=$res->fetchRow();
