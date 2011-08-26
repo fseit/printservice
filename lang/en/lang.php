@@ -6,75 +6,75 @@
  */
 
 // menu entry for admin plugins
-$lang ['menu_printpay'] = 'EIT Print-Service - Ausdrucke bezahlen';
-$lang ['menu_printsummary'] = 'EIT Print-Service - Bestell&uuml;bersicht';
+$lang ['menu_printpay'] = 'EIT Print-Service - Pay Orders';
+$lang ['menu_printsummary'] = 'EIT Print-Service - Order Overview';
 
 // custom language strings for the plugin
 
 //listorders
-$lang ['err_noshow'] = "Wegen eines technischen Fehlers kann deine Bestllung leider nicht angezeigt werden. Falls der Fehler in 5 Minuten immer noch auftritt, gib uns bitte Bescheid.";
-$lang ['field_yourorder'] = "Deine Bestellung im ";
-$lang ['tbl_doc'] = "Skript";
-$lang ['tbl_format'] = "Format";
-$lang ['tbl_pagemode'] = "Doppelseitig";
-$lang ['tbl_price'] = "Preis";
-$lang ['tbl_storno'] = "Stornieren";
-$lang ['tbl_cancel'] = "Löschen";
-$lang ['tbl_comment'] = "Hinweis";
+$lang ['err_noshow'] = "Your order can't be shown due to a technical malfunction. If this error still occurs in 5 minutes, please notify us by email.";
+$lang ['field_yourorder'] = "Your order in ";
+$lang ['tbl_doc'] = "Lecture note";
+$lang ['tbl_format'] = "format";
+$lang ['tbl_pagemode'] = "pagemode";
+$lang ['tbl_price'] = "price";
+$lang ['tbl_storno'] = "cancel";
+$lang ['tbl_cancel'] = "delete";
+$lang ['tbl_comment'] = "note";
 $lang ['tbl_a4'] = "A4";
-$lang ['tbl_a5'] = "2-auf-1";
-$lang ['tbl_simplex'] = "einseitig";
-$lang ['tbl_duplex'] = "doppelseitig";
-$lang ['btn_closed'] = "Die Bestellung ist abgeschlossen";
-$lang ['btn_cancel'] = "Markierte Skripte stornieren";
-$lang ['err_exec'] = "Ein Fehler ist aufgetreten. Das h&auml;tte nicht passieren sollen... Bitte gib uns Bescheid.<br />\n";
-$lang ['btn_create'] = "Neue Bestellung anlegen";
+$lang ['tbl_a5'] = "2-on-1";
+$lang ['tbl_simplex'] = "single-sided";
+$lang ['tbl_duplex'] = "dual-sided";
+$lang ['btn_closed'] = "Orders are closed";
+$lang ['btn_cancel'] = "Cancel marked orders";
+$lang ['err_exec'] = "An error has occured. That should not have happened... Please notify us by email.<br />\n";
+$lang ['btn_create'] = "Create new order";
 
 //printorder
-$lang ['note_noorder'] = "Bestellungen sind nur zu Anfang der Vorlesungszeit m&ouml;glich. Entweder bist du zu fr&uuml;h dran, oder zu sp&auml;t. Falls du der Meinung bist, dass ein Fehler vorliegt und jetzt eigentlich Bestellungen abgegeben werden k&ouml;nnen m&uuml;ssten, schreib uns bitte eine Mail.";
-$lang ['note_orderfinal'] = "Du hast deine Bestellung bereits abgeschickt und bezahlt. Weitere Bestellungen sind nicht mehr möglich.";
-$lang ['note_notfound'] = "Bitte lege zuerst eine neue Bestellung an.";
-$lang ['err_noorder'] = "Wegen eines technischen Fehlers sind derzeit leider keine Bestellungen möglich. Falls der Fehler in 5 Minuten immer noch auftritt, gib uns bitte Bescheid.";
-$lang ['tbl_choosedoc'] = "1. Skripten zum Druck ausw&auml;hlen";
-$lang ['tbl_semester'] = "Semester";
-$lang ['tbl_lecture'] = "Fach";
-$lang ['tbl_file'] = "Datei";
-$lang ['tbl_pages'] = "Seiten";
-$lang ['tbl_baseprice'] = "Grundpreis";
-$lang ['tbl_order'] = "bestellen";
-$lang ['tbl_chooseformat'] = "2. Druckfomat festlegen";
-$lang ['tbl_choosepagemode'] = "3. Seitenmodus festlegen";
-$lang ['tbl_sendorder'] = "4. Bestellung abschicken";
-$lang ['btn_sendorder'] = "Bestellung abschicken";
+$lang ['note_noorder'] = "Orders are possible at the beginning of a semester only. Either you're too early or too late. If you think there is an error, and it should be possible to submit orders right now, please tell us by email.";
+$lang ['note_orderfinal'] = "You already submitted and paid for your order. Additional orders are not allowed.";
+$lang ['note_notfound'] = "Please create a new order first.";
+$lang ['err_noorder'] = "Due to a technical malfunction no orders can be submitted at the moment. If this error still occurs in 5 minutes, please notify us by email.";
+$lang ['tbl_choosedoc'] = "1. Choose documents for print";
+$lang ['tbl_semester'] = "semester";
+$lang ['tbl_lecture'] = "subject";
+$lang ['tbl_file'] = "file";
+$lang ['tbl_pages'] = "pages";
+$lang ['tbl_baseprice'] = "base price";
+$lang ['tbl_order'] = "order";
+$lang ['tbl_chooseformat'] = "2. select print formatn";
+$lang ['tbl_choosepagemode'] = "3. select pagemode";
+$lang ['tbl_sendorder'] = "4. submit order";
+$lang ['btn_sendorder'] = "submit order";
 
 //printsummary
-$lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";
-$lang ['err_nolist'] = "Wegen eines technischen Fehlers kann die Bestellliste leider nicht angezeigt werden. Falls der Fehler in 5 Minuten immer noch auftritt, gib mir bitte Bescheid.";
-$lang ['tbl_customer'] = "Besteller";
-$lang ['tbl_delete'] = "Löschen";
-$lang ['btn_delete'] = "Markierte Bestellungen löschen";
-$lang ['btn_show'] = "Markierte Bestellung anzeigen";
-$lang ['ordersum'] = "Bestellsumme";
-$lang ['tbl_pay'] = "Bezahlen";
-$lang ['tbl_orderid'] = "Bestellnr.";
-$lang ['tbl_username'] = "Nick";
-$lang ['tbl_paid'] = "Bezahlt?";
-$lang ['tbl_status'] = "Status";
+$lang ['msg_deleted'] = "Marked entries were deleted";
+$lang ['err_nolist'] = "The orders can't be shown due to a technical malfunction. If this error still occurs in 5 minutes, please notify us by email.";
+$lang ['tbl_customer'] = "Customer";
+$lang ['tbl_delete'] = "delete";
+$lang ['btn_delete'] = "delete selected orders";
+$lang ['btn_show'] = "show selected orders";
+$lang ['ordersum'] = "order sum";
+$lang ['tbl_pay'] = "pay";
+$lang ['tbl_orderid'] = "Ordering no.";
+$lang ['tbl_username'] = "nick";
+$lang ['tbl_paid'] = "paid?";
+$lang ['tbl_status'] = "status";
 
 //printpay
-$lang ['field_foundusers'] = "Gefundene Benutzer";
-$lang ['tbl_realname'] = "Realname";
-$lang ['btn_choose'] = "Auswählen";
-$lang ['note_noorder'] = "Der Benutzer hat keine Bestellung eingetragen";
-$lang ['note_paid'] = "Der Benutzer hat bereits bezahlt";
-$lang ['field_payment'] = "Bezahlung";
-$lang ['tbl_total'] = "Gesamt";
-$lang ['btn_markpaid'] = "Als bezahlt markieren";
+$lang ['field_foundusers'] = "Found users";
+$lang ['tbl_realname'] = "real name";
+$lang ['btn_choose'] = "choose";
+$lang ['note_noorder'] = "This user has not submitted any order";
+$lang ['note_paid'] = "This user has paid already";
+$lang ['field_payment'] = "payment";
+$lang ['tbl_total'] = "total";
+$lang ['btn_markpaid'] = "mark paid";
 
 //printprocess
-$lang ['msg_reallyclosed'] = "Die Bestellung ist wirklich gesschlossen!";
-$lang ['msg_created'] = "Bestellung wurde angelegt";
-$lang ['msg_added'] = "Skripte wurden zur Bestellung hinzugefügt";
+$lang ['msg_reallyclosed'] = "Ordering is really closed!";
+$lang ['msg_created'] = "created order";
+$lang ['msg_added'] = "Added documents to order";
 
 //$lang [''] = "
 
