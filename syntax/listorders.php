@@ -50,7 +50,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 			$renderer->doc .= "<p><div class=\"notewarning\">" . $this->getLang ( 'err_noshow' ) . "</div></p>";
 		} else {
 			$state = $this->fetchOrderState ( $_SERVER ['REMOTE_USER'] );
-			if ($state == 'notfound') {
+			if ($state == 'notfound' && $this->getConf ( 'active' ) == 1) {
 				$form = new Doku_Form ( array ('id' => 'myorders' ) );
 				$form->addHidden ( 'action', 'order_create' );
 				$form->startFieldSet ( $this->getLang ( 'yourorder' ) . $data ['semester'] );
@@ -58,7 +58,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 				$form->endFieldSet ();
 				$renderer->doc .= $form->getForm ();
 			}
-			$closed = ($state == 'unpaid' ? false : true);
+			$closed = (($state == 'unpaid' || $this->getConf ( 'active' ) == 1 )? false : true);
 			$form = new Doku_Form ( array ('id' => 'myorders' ) );
 			$form->addHidden ( 'action', 'order_cancel' );
 			$form->startFieldSet ( $this->getLang ( 'field_yourorder' ) . $data ['semester'] );

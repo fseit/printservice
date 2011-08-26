@@ -90,7 +90,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		if (isset ( $_REQUEST ['userselect'] )) {
 			$state = $this->fetchOrderState ( $_REQUEST ['userselect'] );
 			if (! state) {
-				ptln ( "<p><div class=\"notewarning\">" . $this->getLang ( 'note_noorder' ) . "</div></p>" );
+				ptln ( "<p><div class=\"notewarning\">" . $this->getLang ( 'note_hasnoorder' ) . "</div></p>" );
 			} else if ($state != 'unpaid') {
 				ptln ( "<p><div class=\"notewarning\">" . $this->getLang ( 'note_paid' ) . "</div></p>" );
 			} else {
