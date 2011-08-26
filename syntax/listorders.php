@@ -57,14 +57,16 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 			//echo "st_".$state."_st";
 			if($state=='notfound') {
 				$form=new Doku_Form(array('id'=>'myorders'));
+				$form->addHidden('action','order_create');
 				$form->startFieldSet($this->getLang('yourorder').$data['semester']);
 				//$form->addElement("<input type=\"submit\" value=\"".$this->getLang('btn_create')."\" />");
-				$form->addElement(form_makeButton('submit', 'createorder', $this->getLang('btn_create')));
+				$form->addElement(form_makeButton('submit', 'show', $this->getLang('btn_create')));
 				$form->endFieldSet();
 				$renderer->doc .= $form->getForm();
 			} 
 			$closed = ($state=='unpaid' ? false : true);
 			$form=new Doku_Form(array('id'=>'myorders'));
+			$form->addHidden('action','order_cancel');
 			$form->startFieldSet($this->getLang('yourorder').$data['semester']);
 			$form->addElement("<table>\n<tr>");
 			$form->addElement("<th>".$this->getLang('tbl_doc')."</th>");
@@ -92,7 +94,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 				$form->addElement("<input type=\"reset\" disabled=\"disabled\" value=\"".$this->getLang('btn_closed')."\" />");
 			} else {
 				//$form->addElement("<input type=\"submit\" value=\"".$this->getLang('btn_cancel')."\" />");
-				$form->addElement(form_makeButton('submit', 'createorder', $this->getLang('btn_cancel')));
+				$form->addElement(form_makeButton('submit', 'show', $this->getLang('btn_cancel')));
 			}
 			$form->endFieldSet();
 			$renderer->doc .= $form->getForm();
@@ -126,12 +128,13 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 
     private function fetchOrder($user) {
 		//$sql='SELECT d.title, o.format, o.duplex, o.price, d.comment, o.id, d.filename, o.paid FROM '.$this->getConf('db_prefix').'orders o JOIN '.$this->getConf('db_prefix').'documents d ON d.id = o.file JOIN phpbb_users u ON u.user_id = o.user WHERE u.username=?';
-        $sql = 'SELECT d.title, i.format, i.duplex, i.price, d.comment, o.id, d.filename, o.paymentState ';
+        $sql = 'SELECT d.title, i.format, i.duplex, i.price, d.comment, i.id, d.filename, o.paymentState ';
         $sql .= 'FROM '.$this->getConf('db_prefix').'orders o ';
         $sql .= 'JOIN '.$this->getConf('db_prefix').'orderitems i ON i.order = o.id ';
         $sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
         $sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
-        $sql .= 'WHERE u.username = ?';
+        $sql .= 'WHERE u.username = ? AND i.deleted=0 ';
+        $sql .= 'ORDER BY i.id';
     	$sqltype=array('text');
         //echo "sql2: ". htmlentities($sql)."<br>\n";
         //echo "sqldata2: ". htmlentities($sqldata)."<br>\n";
@@ -184,7 +187,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
     	$sql .= 'FROM skript_orderitems i ';
         $sql .= 'JOIN skript_orders o ON o.id = i.order ';
         $sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
-        $sql .= 'WHERE o.semester = ? AND u.username = ? ';
+        $sql .= 'WHERE o.semester = ? AND u.username = ? AND i.deleted=0';
     	$sqltype=array('text','text');
     	$sqldata=array($this->getConf('semester'),$user);
         //echo "sql4: ". htmlentities($sql)."<br>\n";

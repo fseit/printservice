@@ -58,7 +58,8 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
         } elseif(!$res=$this->fetchCurrentDocs()) {
         	$renderer->doc .= "<p><div class=\"notewarning\">".$this->getLang('err_noorder')."</div></p>";
         } else {
-            $form=new Doku_Form(array('id'=>'neworder', 'action'=>false, 'method'=>'POST', 'enctype'=>false));
+            $form=new Doku_Form(array('id'=>'neworder'));
+			$form->addHidden('action','order_send');
             //$form->startFieldSet("Skriptendruck");
             $form->startFieldSet($this->getLang('tbl_choosedoc'));
             $form->addElement("<table><tr>");
@@ -79,7 +80,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
             	$form->addElement("<td><a href=\"{$row['filename']}\">{$row['title']}</a></td>");//document name
             	$form->addElement("<td>{$row['pages']}</td>");//pages
             	$form->addElement("<td>".sprintf("%.2f &euro;",round(((int)$row['pages']*$this->getConf('pagecost')+5)/2,-1)/50)."</td>");//price
-            	$form->addElement("<td><input type=\"checkbox\" name=\"stornoId[]\" value=\"{$row['id']}\" /></td>");//order
+            	$form->addElement("<td><input type=\"checkbox\" name=\"orderId[]\" value=\"{$row['id']}\" /></td>");//order
             	$form->addElement("<td>{$row['comment']}</td>");//comment
             	$form->addElement("</tr>");
             }
@@ -90,12 +91,12 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
             $form->addElement("<input type=\"radio\" name=\"format\" value=\"a5\" /> 2-auf-1");
             $form->endFieldSet();
             $form->startFieldSet($this->getLang('tbl_choosepagemode'));
-            $form->addElement("<input type=\"radio\" name=\"duplex\" value=\"simplex\" /> einseitig<br />");
-            $form->addElement("<input type=\"radio\" name=\"duplex\" value=\"duplex\" checked=\"checked\" /> doppelseitig");
+            $form->addElement("<input type=\"radio\" name=\"pagemode\" value=\"simplex\" /> einseitig<br />");
+            $form->addElement("<input type=\"radio\" name=\"pagemode\" value=\"duplex\" checked=\"checked\" /> doppelseitig");
             $form->endFieldSet();
             $form->startFieldSet($this->getLang('tbl_sendorder'));
             //$form->addElement("<input type=\"submit\" value=\"".$this->getLang('btn_sendorder')."\" />");
-            $form->addElement(form_makeButton('submit', 'sendorder', $this->getLang('btn_sendorder')));
+            $form->addElement(form_makeButton('submit', 'show', $this->getLang('btn_sendorder')));
             $form->endFieldSet();
             //$form->endFieldSet();
             $renderer->doc .= $form->getForm();

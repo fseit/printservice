@@ -174,7 +174,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
         $sql .= 'JOIN '.$this->getConf('db_prefix').'orderitems i ON i.order = o.id ';
         $sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
         $sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
-        $sql .= 'WHERE u.username = ?';
+        $sql .= 'WHERE u.username = ? AND i.deleted=0 ';
     	$sqltype=array('text');
         //echo "sql2: ". htmlentities($sql)."<br>\n";
         //echo "sqldata2: ". htmlentities($sqldata)."<br>\n";
@@ -221,7 +221,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
     	$sql .= 'FROM skript_orderitems i ';
         $sql .= 'JOIN skript_orders o ON o.id = i.order ';
         $sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
-        $sql .= 'WHERE o.semester = ? AND u.username = ? ';
+        $sql .= 'WHERE o.semester = ? AND u.username = ?  AND i.deleted=0 ';
     	$sqltype=array('text','text');
     	$sqldata=array($this->getConf('semester'),$user);
         //echo "sql4: ". htmlentities($sql)."<br>\n";
@@ -264,8 +264,11 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		//print_R($ids);
         $this->mdb2->loadModule('Extended', null, false);
 		$sql="DELETE FROM `".$this->getConf('db_prefix')."orderitems` WHERE id=?";
-		echo "sql5: ".$sql;
-		echo "sqldata5: ".print_r($ids,true);
+		$sql = 'UPDATE '.$this->getConf('db_prefix').'orderitems i ';
+		$sql .= 'SET i.deleted = 1 ';
+		$sql .= 'WHERE i.id= ?';
+		//echo "sql5: ".$sql;
+		//echo "sqldata5: ".print_r($ids,true);
         $sqltype=array('integer');
         $query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
 		if (PEAR::isError($query)) {

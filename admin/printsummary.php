@@ -22,21 +22,6 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
     public function forAdminOnly() { return false; }
     public function getMenuText() { return $this->getLang('menu_printsummary'); }
     public function handle() {
-    	$this->dbConnect ();
-    	//print_r($_REQUEST['stornoId']);
-    	if(is_array($_REQUEST['stornoId'])) {
-    		msg($this->getLang('msg_deleted'));
-    	} else return;
-    	
-    	if(!checkSecurityToken()){
-    		msg("nanana!");
-    		return;
-    	} 
-    	//$delete = array();
-    	foreach ($_REQUEST['stornoId'] as $value) {
-    		if(is_numeric($value)) $delete[]=(int)$value;
-  		}
-    	$this->deleteOrders($delete);
     }
 	
 	public function html() {
@@ -111,7 +96,7 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
     	$sql = 'SELECT SUM(d.pages) as pagesum, SUM(i.price) as pricesum FROM '.$this->getConf('db_prefix').'orderitems i ';
      	$sql .= 'JOIN '.$this->getConf('db_prefix').'orders o ON o.id = i.order ';
      	$sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
-    	$sql .= 'WHERE o.semester=?';
+    	$sql .= 'WHERE o.semester=? AND i.deleted=0 ';
         //echo "sql3: ". htmlentities($sql)."<br />\n";
         //$row = $this->mdb2->queryRow ($sql);
         $row = $this->mdb2->extended->getRow($sql, null, array($this->getConf('semester')), array('text'));
@@ -128,7 +113,7 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 		$sql .= 'JOIN '.$this->getConf('db_prefix').'documents d ON d.id = i.file ';
 		$sql .= 'JOIN phpbb_users u ON u.user_id = o.user ';
 		$sql .= 'JOIN phpbb_profile_fields_data p ON p.user_id = o.user ';
-		$sql .= 'WHERE o.semester=? ';
+		$sql .= 'WHERE o.semester=?  AND i.deleted=0 ';
 		$sql .= 'GROUP BY o.id';
         $sqldata=$this->getConf('semester');
         $sqltype=array('text');
@@ -148,19 +133,6 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
             return false;
         }
         return $res;
-    }
-
-	private function deleteOrders($ids) {
-        $this->mdb2->loadModule('Extended', null, false);
-		$sql="DELETE FROM `".$this->getConf('db_prefix')."orderitems` WHERE id=?";
-        $sqltype=array('integer');
-        $query = $this->mdb2->prepare($sql,$sqltype,MDB2_PREPARE_RESULT);
-        $this->mdb2->extended->executeMultiple($query,$ids);
-
-        if (PEAR::isError($res)) {
-            die("Query5: ".$res->getMessage());
-        }
-        return $row;
     }
 }
 
