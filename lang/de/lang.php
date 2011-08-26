@@ -59,6 +59,9 @@ $lang ['tbl_orderid'] = "Bestellnr.";
 $lang ['tbl_username'] = "Nick";
 $lang ['tbl_paid'] = "Bezahlt?";
 $lang ['tbl_status'] = "Status";
+$lang ['ordered'] = "Bestellt";
+$lang ['printed'] = "Gedruckt";
+$lang ['delivered'] = "Abgeholt";
 
 //printpay
 $lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";
@@ -76,7 +79,5 @@ $lang ['msg_paid'] = "Bezahlung abgeschlossen";
 $lang ['msg_reallyclosed'] = "Die Bestellung ist wirklich gesschlossen!";
 $lang ['msg_created'] = "Bestellung wurde angelegt";
 $lang ['msg_added'] = "Skripte wurden zur Bestellung hinzugefügt";
-
-//$lang [''] = "
 
 //Setup VIM: ex: et ts=4 :

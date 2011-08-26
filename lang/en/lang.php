@@ -48,7 +48,6 @@ $lang ['tbl_sendorder'] = "4. submit order";
 $lang ['btn_sendorder'] = "submit order";
 
 //printsummary
-$lang ['msg_deleted'] = "Marked entries were deleted";
 $lang ['err_nolist'] = "The orders can't be shown due to a technical malfunction. If this error still occurs in 5 minutes, please notify us by email.";
 $lang ['tbl_customer'] = "Customer";
 $lang ['tbl_delete'] = "delete";
@@ -60,8 +59,12 @@ $lang ['tbl_orderid'] = "Ordering no.";
 $lang ['tbl_username'] = "nick";
 $lang ['tbl_paid'] = "paid?";
 $lang ['tbl_status'] = "status";
+$lang ['ordered'] = "ordered";
+$lang ['printed'] = "printed";
+$lang ['delivered'] = "delivered";
 
 //printpay
+$lang ['msg_deleted'] = "Marked entries were deleted";
 $lang ['field_foundusers'] = "Found users";
 $lang ['tbl_realname'] = "real name";
 $lang ['btn_choose'] = "choose";
@@ -70,12 +73,11 @@ $lang ['note_paid'] = "This user has paid already";
 $lang ['field_payment'] = "payment";
 $lang ['tbl_total'] = "total";
 $lang ['btn_markpaid'] = "mark paid";
+$lang ['msg_paid'] = "Payment complete";
 
 //printprocess
 $lang ['msg_reallyclosed'] = "Ordering is really closed!";
 $lang ['msg_created'] = "created order";
 $lang ['msg_added'] = "Added documents to order";
-
-//$lang [''] = "
 
 //Setup VIM: ex: et ts=4 :

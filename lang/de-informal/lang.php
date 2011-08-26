@@ -48,7 +48,6 @@ $lang ['tbl_sendorder'] = "4. Bestellung abschicken";
 $lang ['btn_sendorder'] = "Bestellung abschicken";
 
 //printsummary
-$lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";
 $lang ['err_nolist'] = "Wegen eines technischen Fehlers kann die Bestellliste leider nicht angezeigt werden. Falls der Fehler in 5 Minuten immer noch auftritt, gib mir bitte Bescheid.";
 $lang ['tbl_customer'] = "Besteller";
 $lang ['tbl_delete'] = "Löschen";
@@ -65,6 +64,7 @@ $lang ['printed'] = "Gedruckt";
 $lang ['delivered'] = "Abgeholt";
 
 //printpay
+$lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";
 $lang ['field_foundusers'] = "Gefundene Benutzer";
 $lang ['tbl_realname'] = "Realname";
 $lang ['btn_choose'] = "Auswählen";
@@ -73,12 +73,11 @@ $lang ['note_paid'] = "Der Benutzer hat bereits bezahlt";
 $lang ['field_payment'] = "Bezahlung";
 $lang ['tbl_total'] = "Gesamt";
 $lang ['btn_markpaid'] = "Als bezahlt markieren";
+$lang ['msg_paid'] = "Bezahlung abgeschlossen";
 
 //printprocess
 $lang ['msg_reallyclosed'] = "Die Bestellung ist wirklich gesschlossen!";
 $lang ['msg_created'] = "Bestellung wurde angelegt";
 $lang ['msg_added'] = "Skripte wurden zur Bestellung hinzugefügt";
-
-//$lang [''] = "";
 
 //Setup VIM: ex: et ts=4 :
