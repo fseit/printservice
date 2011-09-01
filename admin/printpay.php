@@ -250,7 +250,6 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 	
 	private function deleteOrders($ids) {
 		$this->mdb2->loadModule ( 'Extended', null, false );
-		$sql = "DELETE FROM `" . $this->getConf ( 'db_prefix' ) . "orderitems` WHERE id=?";
 		$sql = 'UPDATE ' . $this->getConf ( 'db_prefix' ) . 'orderitems i ';
 		$sql .= 'SET i.deleted = 1 ';
 		$sql .= 'WHERE i.id= ?';
@@ -270,7 +269,8 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 	
 	private function storePayment($order) {
 		$this->mdb2->loadModule ( 'Extended', null, false );
-		$sql = "UPDATE `" . $this->getConf ( 'db_prefix' ) . "orders` SET paymentState='paid' WHERE id=?";
+		$sql = "UPDATE `" . $this->getConf ( 'db_prefix' ) . "orders` ";
+		$sql .= "SET paymentState='paid' WHERE id=?";
 		$sqltype = array ('integer' );
 		$res = $query = $this->mdb2->prepare ( $sql, $sqltype );
 		$query->execute ( $order );

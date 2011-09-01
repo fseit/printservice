@@ -8,6 +8,7 @@
 // menu entry for admin plugins
 $lang ['menu_printpay'] = 'EIT Print-Service - Ausdrucke bezahlen';
 $lang ['menu_printsummary'] = 'EIT Print-Service - Bestell&uuml;bersicht';
+$lang ['menu_printmapping'] = 'EIT Print-Service - Skriptzuordnung';
 
 // custom language strings for the plugin
 
@@ -79,5 +80,15 @@ $lang ['msg_paid'] = "Bezahlung abgeschlossen";
 $lang ['msg_reallyclosed'] = "Die Bestellung ist wirklich gesschlossen!";
 $lang ['msg_created'] = "Bestellung wurde angelegt";
 $lang ['msg_added'] = "Skripte wurden zur Bestellung hinzugefügt";
+
+//printmapping
+$lang ['err_dbdown'] = "Die Datenbank ist derzeit nicht verfügbar. Du solltest selbst wissen was jetzt zu tun ist, schließlich bist du der Admin ;-)";
+$lang ['field_newmapping'] = "Zuordnungen neu anlegen";
+$lang ['btn_savemapping'] = "Zuordnung speichern";
+$lang ['field_loadsemester'] = "Zuordnungen aus altem Semester laden";
+$lang ['btn_loadsemester'] = "Semester laden";
+$lang ['field_editmappings'] = "Zuordnungen bearbeiten";
+$lang ['tbl_lecturer'] = "Dozent";
+$lang ['tbl_id'] = "Id";
 
 //Setup VIM: ex: et ts=4 :
