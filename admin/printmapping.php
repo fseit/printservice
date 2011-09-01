@@ -47,7 +47,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 			} else {
 				//edit existing entries
 				foreach ( $_REQUEST ['edit_id'] as $key => $value ) {
-					if (! in_array ( $value, $_REQUEST ['edit_delete'] )) {
+					if (! isset($_REQUEST ['edit_delete']) || ! in_array ( $value, $_REQUEST ['edit_delete'] )) {
 						$data [] = array ('lecturer' => (( int ) $_REQUEST ['edit_lecturer'][$key]), 
 											'document' => (( int ) $_REQUEST ['edit_document'][$key]), 
 											'id' => (( int ) $value));
