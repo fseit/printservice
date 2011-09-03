@@ -105,6 +105,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 			die ( "connect: " . $this->mdb2->getMessage () );
 		}
 		$this->mdb2->setFetchMode ( MDB2_FETCHMODE_ASSOC );
+		$this->mdb2->setCharset('utf8');
 		return true;
 	}
 	

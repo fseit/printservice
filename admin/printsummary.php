@@ -82,6 +82,7 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 			die ( "connect: " . $this->mdb2->getMessage () );
 		}
 		$this->mdb2->setFetchMode ( MDB2_FETCHMODE_ASSOC );
+		$this->mdb2->setCharset('utf8');
 		return true;
 	}
 	

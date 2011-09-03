@@ -98,6 +98,7 @@ class action_plugin_printservice_printprocess extends DokuWiki_Action_Plugin {
 			die ( "connect: " . $this->mdb2->getMessage () );
 		}
 		$this->mdb2->setFetchMode ( MDB2_FETCHMODE_ASSOC );
+		$this->mdb2->setCharset('utf8');
 		return true;
 	}
 	
