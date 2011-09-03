@@ -30,7 +30,6 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 	}
 	public function handle() {
 		$this->dbConnect ();
-		//echo "request: <pre>".print_r($_REQUEST,true)."</pre><br />\n";
 		//insert
 		$data = array ();
 		if (isset ( $_REQUEST ['edit_id'] )) {
@@ -87,13 +86,13 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 			$documents = $this->fetchDocuments ();
 			$semester = isset ( $_REQUEST ['load_semester'] ) && array_key_exists ( $_REQUEST ['load_semester'], $semesters ) ? $_REQUEST ['load_semester'] : $this->getConf ( 'semester' );
 			$mapping = $this->fetchMappings ( $semester );
-			
+			$unknown = $this->fetchUnknownMappings();
 			//insert
 			$form = new Doku_Form ( array ('id' => 'insertmapping', 'method' => 'POST' ) );
 			$form->startFieldSet ( $this->getLang ('field_newmapping') );
 			$form->addHidden ( 'page', 'printservice_printmapping' );
 			$form->addElement ( '<table><tr><th>'.$this->getLang ('tbl_lecture').'</th><th>'.$this->getLang ('tbl_lecturer').'</th><th>'.$this->getLang ('tbl_doc').'</th></tr>' );
-			for($i = 0; $i < 5; $i ++) {
+			for($i = 0; $i < 3; $i ++) {
 				$form->addElement ( '<tr><td><select size="1" name="add_lecture[]">' );
 				$form->addElement ( '<option value="0">---</option>' );
 				foreach ( $lectures as $key => $value ) {
@@ -129,19 +128,19 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 				$form->endFieldSet ();
 				$form->printForm ();
 			} else {
-				//edit
-				$form = new Doku_Form ( array ('id' => 'editmapping', 'method' => 'POST' ) );
-				$form->startFieldSet ( $this->getLang ('field_editmappings') );
+				//editunknown
+				$form = new Doku_Form ( array ('id' => 'editunknownmapping', 'method' => 'POST' ) );
+				$form->startFieldSet ( $this->getLang ('field_editunknownmappings') );
 				$form->addHidden ( 'page', 'printservice_printmapping' );
 				if ($semester != $this->getConf ( 'semester' )) {
 					$form->addHidden ( 'oldsemester', 'true' );
 				}
 				$form->addElement ( '<table><tr><th>'.$this->getLang ('tbl_id').'</th><th>'.$this->getLang ('tbl_lecture').'</th><th>'.$this->getLang ('tbl_lecturer').'</th><th>'.$this->getLang ('tbl_doc').'</th><th>'.$this->getLang ('tbl_delete').'</th></tr>' );
-				while ( $row = $mapping->fetchRow () ) {
+				while ( $row = $unknown->fetchRow () ) {
 					$form->addElement ( '<tr><td>' . $row ['id'] );
 					$form->addElement ( '<input type="hidden" value="' . $row ['id'] . '" name="edit_id[]">' );
 					$form->addElement ( '</td><td>' );
-					$form->addElement ( hsc ( $lectures [$row ['id']] ) );
+					$form->addElement ( hsc ( $lectures [$row ['lecture']] ) );
 					$form->addElement ( '</td><td><select size="1" name="edit_lecturer[]">' );
 					$form->addElement ( '<option value="0">---</option>' );
 					foreach ( $lecturers as $key => $value ) {
@@ -160,6 +159,39 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 				$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ('btn_savemapping') ) );
 				$form->endFieldSet ();
 				$form->printForm ();
+				$unknown->free;
+				//edit
+				$form = new Doku_Form ( array ('id' => 'editmapping', 'method' => 'POST' ) );
+				$form->startFieldSet ( $this->getLang ('field_editmappings') );
+				$form->addHidden ( 'page', 'printservice_printmapping' );
+				if ($semester != $this->getConf ( 'semester' )) {
+					$form->addHidden ( 'oldsemester', 'true' );
+				}
+				$form->addElement ( '<table><tr><th>'.$this->getLang ('tbl_id').'</th><th>'.$this->getLang ('tbl_lecture').'</th><th>'.$this->getLang ('tbl_lecturer').'</th><th>'.$this->getLang ('tbl_doc').'</th><th>'.$this->getLang ('tbl_delete').'</th></tr>' );
+				while ( $row = $mapping->fetchRow () ) {
+					$form->addElement ( '<tr><td>' . $row ['id'] );
+					$form->addElement ( '<input type="hidden" value="' . $row ['id'] . '" name="edit_id[]">' );
+					$form->addElement ( '</td><td>' );
+					$form->addElement ( hsc ( $lectures [$row ['lecture']] ) );
+					$form->addElement ( '</td><td><select size="1" name="edit_lecturer[]">' );
+					$form->addElement ( '<option value="0">---</option>' );
+					foreach ( $lecturers as $key => $value ) {
+						$form->addElement ( '<option value="' . $key . '"' . ($key == $row ['lecturer'] ? ' selected="selected"' : '') . '>' . $value . '</option>' );
+					}
+					$form->addElement ( '</select></td><td><select size="1" name="edit_document[]">' );
+					$form->addElement ( '<option value="0">---</option>' );
+					foreach ( $documents as $key => $value ) {
+						$form->addElement ( '<option value="' . $key . '"' . ($key == $row ['document'] ? ' selected="selected"' : '') . '>' . $value . '</option>' );
+					}
+					$form->addElement ( '</select></td><td>' );
+					$form->addElement ( '<input type="checkbox" value="' . $row ['id'] . '" name="edit_delete[]">' );
+					$form->addElement ( '</td></tr>' );
+				}
+				$form->addElement ( '</table>' );
+				$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ('btn_savemapping') ) );
+				$form->endFieldSet ();
+				$form->printForm ();
+				$mapping->free;
 			}
 		}
 	}
@@ -171,6 +203,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 			die ( "connect: " . $this->mdb2->getMessage () );
 		}
 		$this->mdb2->setFetchMode ( MDB2_FETCHMODE_ASSOC );
+		$this->mdb2->setCharset('utf8');
 		return true;
 	}
 	
@@ -248,6 +281,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		$this->mdb2->loadModule ( 'Extended', null, false );
 		$sql = 'SELECT id, brief  ';
 		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'lectures ';
+		$sql .= 'ORDER BY id ';
 		$rows = $this->mdb2->extended->getAssoc ( $sql );
 		if (PEAR::isError ( $rows )) {
 			die ( "Query3b: " . $rows->getMessage () );
@@ -288,6 +322,29 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		}
 		return $res;
 	}
+
+	private function fetchUnknownMappings() {
+		$sql = 'SELECT id, lecture, lecturer, document ';
+		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'mappings o ';
+		$sql .= 'WHERE semester=? AND (document=1 OR lecturer=1) ';
+		$sql .= 'ORDER BY id ';
+		$sqldata = $this->getConf ( 'semester' );
+		$sqltype = array ('text' );
+		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
+		if (PEAR::isError ( $query )) {
+			echo "Prepare4a: " . htmlentities ( $query->getMessage () );
+			return false;
+		}
+		$res = $query->execute ( $sqldata );
+		if (PEAR::isError ( $res )) {
+			echo "Exec4b: " . htmlentities ( $this->res->getMessage () ) . "<br>\n";
+			return false;
+		} elseif ($res == DB_OK or empty ( $res )) {
+			echo $this->getLang ( 'err_exec' );
+			return false;
+		}
+		return $res;
+	}
 	
 	private function addMappings($mapping) {
 		$this->mdb2->loadModule ( 'Extended', null, false );
@@ -295,25 +352,6 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		$sql .= '(`semester`, `lecture`, `lecturer`, `document`) ';
 		$sql .= 'VALUES (:semester, :lecture , :lecturer, :document) ';
 		$sqltype = array ('text', 'integer', 'integer', 'integer' );
-		$query = $this->mdb2->prepare ( $sql, $sqltype );
-		if (PEAR::isError ( $query )) {
-			echo "Prepare4b: " . $query->getMessage ();
-			return false;
-		}
-		$res = $this->mdb2->extended->executeMultiple ( $query, $mapping );
-		if (PEAR::isError ( $res )) {
-			die ( "Exec4b: " . $res->getMessage () );
-		}
-		$query->free ();
-		return true;
-	}
-	
-	private function editMappings($mapping) {
-		$this->mdb2->loadModule ( 'Extended', null, false );
-		$sql = 'UPDATE `' . $this->getConf ( 'db_prefix' ) . 'mappings` ';
-		$sql .= 'SET `lecturer`=:lecturer,`document`=:document ';
-		$sql .= 'WHERE `id`=:id ';
-		$sqltype = array ('integer', 'integer', 'integer' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype );
 		if (PEAR::isError ( $query )) {
 			echo "Prepare4c: " . $query->getMessage ();
@@ -327,24 +365,43 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		return true;
 	}
 	
-	private function deleteMappings($ids) {
-		
+	private function editMappings($mapping) {
 		$this->mdb2->loadModule ( 'Extended', null, false );
-		$sql = 'DELETE FROM `' . $this->getConf ( 'db_prefix' ) . 'mappings` ';
-		$sql .= 'WHERE `id`=? ';
-		$sqltype = array ('integer' );
+		$sql = 'UPDATE `' . $this->getConf ( 'db_prefix' ) . 'mappings` ';
+		$sql .= 'SET `lecturer`=:lecturer,`document`=:document ';
+		$sql .= 'WHERE `id`=:id ';
+		$sqltype = array ('integer', 'integer', 'integer' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype );
 		if (PEAR::isError ( $query )) {
 			echo "Prepare4d: " . $query->getMessage ();
 			return false;
 		}
-		$res = $this->mdb2->extended->executeMultiple ( $query, $ids );
+		$res = $this->mdb2->extended->executeMultiple ( $query, $mapping );
 		if (PEAR::isError ( $res )) {
 			die ( "Exec4d: " . $res->getMessage () );
 		}
 		$query->free ();
 		return true;
 	}
+	
+	private function deleteMappings($ids) {
+		$this->mdb2->loadModule ( 'Extended', null, false );
+		$sql = 'DELETE FROM `' . $this->getConf ( 'db_prefix' ) . 'mappings` ';
+		$sql .= 'WHERE `id`=? ';
+		$sqltype = array ('integer' );
+		$query = $this->mdb2->prepare ( $sql, $sqltype );
+		if (PEAR::isError ( $query )) {
+			echo "Prepare4e: " . $query->getMessage ();
+			return false;
+		}
+		$res = $this->mdb2->extended->executeMultiple ( $query, $ids );
+		if (PEAR::isError ( $res )) {
+			die ( "Exec4e: " . $res->getMessage () );
+		}
+		$query->free ();
+		return true;
+	}
+	
 }
 
 // vim:ts=4:sw=4:et:

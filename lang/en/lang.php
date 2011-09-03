@@ -88,6 +88,7 @@ $lang ['btn_savemapping'] = "Zuordnung speichern";
 $lang ['field_loadsemester'] = "Zuordnungen aus altem Semester laden";
 $lang ['btn_loadsemester'] = "Semester laden";
 $lang ['field_editmappings'] = "Zuordnungen bearbeiten";
+$lang ['field_editunknownmappings'] = "TODO";
 $lang ['tbl_lecturer'] = "Dozent";
 $lang ['tbl_id'] = "Id";
 
