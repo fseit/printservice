@@ -23,7 +23,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		return FIXME;
 	}
 	public function forAdminOnly() {
-		return false;
+		return true;
 	}
 	public function getMenuText() {
 		return $this->getLang ( 'menu_printpay' );
@@ -111,7 +111,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 				$form->addElement ( "</tr>" );
 				while ( $row = $res->fetchRow () ) {
 					$form->addElement ( "<tr>" );
-					$form->addElement ( "<td><a href=\"{$row['filename']}\">{$row['title']}</a></td>" ); //Skript
+					$form->addElement ( "<td><a href=\"{$row['filename']}\">{$row['title']}: {$row['filename']}</a></td>" ); //Skript
 					$form->addElement ( "<td>" . ($row ['format'] == "a4" ? $this->getLang ( 'tbl_a4' ) : $this->getLang ( 'tbl_a5' )) . "</td>" ); //Format
 					$form->addElement ( "<td>" . ($row ['duplex'] == "simplex" ? $this->getLang ( 'tbl_simplex' ) : $this->getLang ( 'tbl_duplex' )) . "</td>" ); //Doppelseitig
 					$form->addElement ( "<td>{$row['pages']}</td>" ); //Preis
@@ -146,7 +146,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 	}
 	
 	private function dbConnect() {
-		$dsn = 'mysqli://' . $this->getConf ( 'db_user' ) . ':' . $this->getConf ( 'db_password' ) . '@' . $this->getConf ( 'db_server' ) . '/' . $this->getConf ( 'db_database' );
+		$dsn = 'mysql://' . $this->getConf ( 'db_user' ) . ':' . $this->getConf ( 'db_password' ) . '@' . $this->getConf ( 'db_server' ) . '/' . $this->getConf ( 'db_database' );
 		$this->mdb2 = & MDB2::connect ( $dsn );
 		if (PEAR::isError ( $mdb2 )) {
 			die ( "connect: " . $this->mdb2->getMessage () );

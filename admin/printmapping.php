@@ -197,7 +197,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 	}
 	
 	private function dbConnect() {
-		$dsn = 'mysqli://' . $this->getConf ( 'db_user' ) . ':' . $this->getConf ( 'db_password' ) . '@' . $this->getConf ( 'db_server' ) . '/' . $this->getConf ( 'db_database' );
+		$dsn = 'mysql://' . $this->getConf ( 'db_user' ) . ':' . $this->getConf ( 'db_password' ) . '@' . $this->getConf ( 'db_server' ) . '/' . $this->getConf ( 'db_database' );
 		$this->mdb2 = & MDB2::connect ( $dsn );
 		if (PEAR::isError ( $mdb2 )) {
 			die ( "connect: " . $this->mdb2->getMessage () );
