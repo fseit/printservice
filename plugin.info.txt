@@ -1,7 +1,7 @@
 base   printservice
 author Florian Rinke
-email  rinke.florian@web.de
+email  florian.rinke@fs-eit.de
 date   2011-07-31
 name   printservice plugin
 desc   Nimmt Druckbestllungen entgegen und generiert eine Gesamtliste
-url    http://www.ich-schnalls.net
+url    http://www.fs-eit.de

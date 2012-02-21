@@ -2,7 +2,7 @@
 /**
  * english language file for printservice plugin
  *
- * @author Florian Rinke <rinke.florian@web.de>
+ * @author Florian Rinke <florian.rinke@fs-eit.de>
  */
 
 // keys need to match the config setting name

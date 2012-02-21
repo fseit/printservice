@@ -2,7 +2,7 @@
 /**
  * English language file for printservice plugin
  *
- * @author Florian Rinke <rinke.florian@web.de>
+ * @author Florian Rinke <florian.rinke@fs-eit.de>
  */
 
 // menu entry for admin plugins

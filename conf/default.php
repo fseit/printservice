@@ -2,7 +2,7 @@
 /**
  * Default settings for the printservice plugin
  *
- * @author Florian Rinke <rinke.florian@web.de>
+ * @author Florian Rinke <florian.rinke@fs-eit.de>
  */
 
 $conf ['db_server'] = 'localhost';

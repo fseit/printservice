@@ -3,7 +3,7 @@ printservice Plugin for DokuWiki
 Nimmt Druckbestllungen entgegen und generiert eine Gesamtliste
 
 All documentation for this plugin can be found at
-http://www.ich-schnalls.net
+http://www.fs-eit.de
 
 If you install this plugin manually, make sure it is installed in
 lib/plugins/printservice/ - if the folder is called different it
@@ -13,7 +13,7 @@ Please refer to http://www.dokuwiki.org/plugins for additional info
 on how to install plugins in DokuWiki.
 
 ----
-Copyright (C) Florian Rinke <rinke.florian@web.de>
+Copyright (C) Florian Rinke <florian.rinke@fs-eit.de>
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
