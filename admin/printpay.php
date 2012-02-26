@@ -14,9 +14,19 @@ if (!defined('DOKU_PLUGIN'))
 	define ( 'DOKU_PLUGIN', DOKU_INC . 'lib/plugins/' );
 
 require_once DOKU_PLUGIN . 'admin.php';
-require_once ('MDB2.php');
 
 class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
+	
+	function getInfo() {
+		return array(
+				'author' => 'Florian Rinke',
+				'email'  => 'florian.rinke@fs-eit.de',
+				'date'   => '2011-07-31',
+				'name'   => 'Kasse',
+				'desc'   => 'Verwaltet Bezahlungen',
+				'url'    => 'http://www.fs-eit.de',
+		);
+	}
 	
 	public function getMenuSort() {
 		return FIXME;
@@ -28,7 +38,8 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		return $this->getLang ( 'menu_printpay' );
 	}
 	public function handle() {
-		$this->dbConnect ();
+		$dbhelper =& plugin_load('helper','printservice_database');
+		$dbhelper->dbConnect ();
 		
 		//delete entries
 		if (is_array ( $_REQUEST ['stornoId'] )) {
@@ -41,7 +52,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 				if (is_numeric ( $value ))
 					$delete [] = ( int ) $value;
 			}
-			$this->deleteOrders ( $delete );
+			$dbhelper->deleteOrders ( $delete );
 			msg ( $this->getLang ( 'msg_deleted' ) );
 		}
 		
@@ -52,14 +63,15 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 				return;
 			}
 			//echo "pm_" . $_REQUEST ['payment'] . "_pm";
-			$this->storePayment ( $_REQUEST ['payment'] + 0 );
+			$dbhelper->storePayment ( $_REQUEST ['payment'] + 0 );
 			msg ( $this->getLang ( 'msg_pais' ) );
 		}
 	
 	}
 	
 	public function html() {
-		$this->dbConnect ();
+		$dbhelper =& plugin_load('helper','printservice_database');
+		$dbhelper->dbConnect ();
 		
 		ptln ( '<h1>' . $this->getLang ( 'menu_printpay' ) . '</h1>' );
 		//Search field
@@ -71,7 +83,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		
 		//Select field
 		if (isset ( $_REQUEST ['namesearch'] )) {
-			$names = $this->searchUser ( $_REQUEST ['namesearch'] );
+			$names = $dbhelper->searchUser ( $_REQUEST ['namesearch'] );
 			$form = new Doku_Form ( array ('id' => 'selectuser', 'method' => 'POST' ) );
 			$form->addHidden ( 'page', 'printservice_printpay' );
 			$form->startFieldSet ( $this->getLang ( 'field_foundusers' ) );
@@ -87,18 +99,18 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		}
 		//show order
 		if (isset ( $_REQUEST ['userselect'] )) {
-			$state = $this->fetchOrderState ( $_REQUEST ['userselect'] );
+			$state = $dbhelper->fetchOrderState ( $_REQUEST ['userselect'] );
 			if (! state) {
 				ptln ( "<p><div class=\"notewarning\">" . $this->getLang ( 'note_hasnoorder' ) . "</div></p>" );
 			} else if ($state != 'unpaid') {
 				ptln ( "<p><div class=\"notewarning\">" . $this->getLang ( 'note_paid' ) . "</div></p>" );
 			} else {
 				$orderid = - 1;
-				$res = $this->fetchOrder ( $_REQUEST ['userselect'] );
+				$res = $dbhelper->fetchOrder ( $_REQUEST ['userselect'] );
 				$form = new Doku_Form ( array ('id' => 'myorders' ) );
 				$form->addHidden ( 'page', 'printservice_printpay' );
 				$form->addHidden ( 'userselect', hsc ( $_REQUEST ['userselect'] ) );
-				$form->startFieldSet ( "Bestellung von " . $_REQUEST ['userselect'] . " im " . $this->fetchSemester () );
+				$form->startFieldSet ( "Bestellung von " . $_REQUEST ['userselect'] . " im " . $dbhelper->fetchSemester ($this->getConf ( 'semester' )) );
 				$form->addElement ( "<table>\n<tr>" );
 				$form->addElement ( "<th>" . $this->getLang ( 'tbl_doc' ) . "</th>" );
 				$form->addElement ( "<th>" . $this->getLang ( 'tbl_format' ) . "</th>" );
@@ -144,7 +156,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		}
 	}
 	
-	private function dbConnect() {
+	/*private function dbConnect() {
 		$dsn = 'mysql://' . $this->getConf ( 'db_user' ) . ':' . $this->getConf ( 'db_password' ) . '@' . $this->getConf ( 'db_server' ) . '/' . $this->getConf ( 'db_database' );
 		$this->mdb2 = & MDB2::connect ( $dsn );
 		if (PEAR::isError ( $mdb2 )) {
@@ -278,7 +290,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
             die("Query6: ".$res->getMessage());
         }
         return true;
-    }
+    }*/
 }
 
 // vim:ts=4:sw=4:et:
