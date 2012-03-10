@@ -56,13 +56,15 @@ $lang ['btn_delete'] = "delete selected orders";
 $lang ['btn_show'] = "show selected orders";
 $lang ['ordersum'] = "order sum";
 $lang ['tbl_pay'] = "pay";
-$lang ['tbl_orderid'] = "Ordering no.";
+$lang ['tbl_orderid'] = "Order no.";
 $lang ['tbl_username'] = "nick";
 $lang ['tbl_paid'] = "paid?";
 $lang ['tbl_status'] = "status";
-$lang ['ordered'] = "ordered";
+$lang ['unpaid'] = "open";
+$lang ['paid'] = "ordered";
 $lang ['printed'] = "printed";
 $lang ['delivered'] = "delivered";
+$lang ['canceled'] = "canceled";
 
 //printpay
 $lang ['msg_deleted'] = "Marked entries were deleted";
@@ -91,5 +93,3 @@ $lang ['field_editmappings'] = "Zuordnungen bearbeiten";
 $lang ['field_editunknownmappings'] = "TODO";
 $lang ['tbl_lecturer'] = "Dozent";
 $lang ['tbl_id'] = "Id";
-
-//Setup VIM: ex: et ts=4 :

@@ -57,11 +57,11 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 		//DB-Link, Semester abfragen
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();
-		if (! $res = $dbhelper->fetchOrder ( $_SERVER ['REMOTE_USER'] )) {
+		$orderId = array();
+		if (! $state = $dbhelper->fetchOrderState ( $_SERVER ['REMOTE_USER'], $this->getConf ( 'semester' ) )) {
 			$renderer->doc .= "<p><div class=\"notewarning\">" . $this->getLang ( 'err_noshow' ) . "</div></p>";
 		} else {
-			$state = $dbhelper->fetchOrderState ( $_SERVER ['REMOTE_USER'] );
-			if ($state == 'notfound' && $this->getConf ( 'active' ) == 1) {
+			if (($state == 'notfound' ||$state == 'final'  )  && $this->getConf ( 'active' ) == 1) {
 				$form = new Doku_Form ( array ('id' => 'myorders' ) );
 				$form->addHidden ( 'action', 'order_create' );
 				$form->startFieldSet ( $this->getLang ( 'yourorder' ) . $data ['semester'] );
@@ -69,47 +69,50 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 				$form->endFieldSet ();
 				$renderer->doc .= $form->getForm ();
 			}
-			$closed = (($state == 'unpaid' || $this->getConf ( 'active' ) == 1 )? false : true);
-			$form = new Doku_Form ( array ('id' => 'myorders' ) );
-			$form->addHidden ( 'action', 'order_cancel' );
-			$form->startFieldSet ( $this->getLang ( 'field_yourorder' ) . $data ['semester'] );
-			$form->addElement ( "<table>\n<tr>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_doc' ) . "</th>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_format' ) . "</th>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_pagemode' ) . "</th>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_price' ) . "</th>" );
-			if (! $closed)
-				$form->addElement ( "<th>" . $this->getLang ( 'tbl_cancel' ) . "</th>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_comment' ) . "</th>" );
-			$form->addElement ( "</tr>" );
-			while ( $row = $res->fetchRow () ) {
-				$form->addElement ( "<tr>" );
-				$form->addElement ( "<td><a href=\"{$row['filename']}\">>{$row['title']}: {$row['filename']}</a></td>" ); //Skript
-				$form->addElement ( "<td>" . ($row ['format'] == "a4" ? $this->getLang ( 'tbl_a4' ) : $this->getLang ( 'tbl_a5' )) . "</td>" ); //Format
-				$form->addElement ( "<td>" . ($row ['duplex'] == "simplex" ? $this->getLang ( 'tbl_simplex' ) : $this->getLang ( 'tbl_duplex' )) . "</td>" ); //Doppelseitig
-				$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $row ['price'] ) . "</td>" ); //Preis
+			if ($state == 'notfound' ||  $this->getConf ( 'active' ) == 0) {
+				return false;
+			}
+			$orderids = $dbhelper->fetchOrderIds ( $_SERVER ['REMOTE_USER'], $this->getConf ( 'semester' ));
+			foreach ( $orderids as $element ) {
+				$closed = ($this->getConf ( 'active' ) == 0 || $dbhelper->fetchOrderStateById($element) != 'unpaid' );
+				$order=$dbhelper->fetchOrderItemsByIds ( $element );
+				$form = new Doku_Form ( array ('id' => 'myorders' ) );
+				$form->addHidden ( 'action', 'order_cancel' );
+				$form->addHidden ( 'orderID', $element );
+				$form->startFieldSet ( $this->getLang ( 'field_yourorder' ) . $data ['semester'] ." (#{$element})");
+				$form->addElement ( "<table>\n<tr>" );
+				$form->addElement ( "<th>" . $this->getLang ( 'tbl_doc' ) . "</th>" );
+				$form->addElement ( "<th>" . $this->getLang ( 'tbl_format' ) . "</th>" );
+				$form->addElement ( "<th>" . $this->getLang ( 'tbl_pagemode' ) . "</th>" );
+				$form->addElement ( "<th>" . $this->getLang ( 'tbl_price' ) . "</th>" );
 				if (! $closed)
-					$form->addElement ( "<td><input type=\"checkbox\" name=\"stornoId[]\" value=\"{$row['id']}\" /></td>" ); //Stornieren
-				$form->addElement ( "<td>{$row['comment']}</td>" ); //Hinweis
-				$form->addElement ( "</tr>\n" );
+					$form->addElement ( "<th>" . $this->getLang ( 'tbl_cancel' ) . "</th>" );
+				$form->addElement ( "<th>" . $this->getLang ( 'tbl_comment' ) . "</th>" );
+				$form->addElement ( "</tr>" );
+				foreach ( $order as $selected ) {
+					$form->addElement ( "<tr>" );
+					$form->addElement ( "<td><a href=\"{$selected['filename']}\">{$selected['title']}: {$selected['filename']}</a></td>" ); // Skript
+					$form->addElement ( "<td>" . ($selected ['format'] == "a4" ? $this->getLang ( 'tbl_a4' ) : $this->getLang ( 'tbl_a5' )) . "</td>" ); // Format
+					$form->addElement ( "<td>" . ($selected ['duplex'] == "simplex" ? $this->getLang ( 'tbl_simplex' ) : $this->getLang ( 'tbl_duplex' )) . "</td>" ); // Doppelseitig
+					$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $selected ['price'] ) . "</td>" ); // Preis
+					if (! $closed)
+						$form->addElement ( "<td><input type=\"checkbox\" name=\"stornoId[]\" value=\"{$selected['id']}\" /></td>" ); // Stornieren
+					$form->addElement ( "<td>{$selected['comment']}</td>" ); // Hinweis
+					$form->addElement ( "</tr>\n" );
+				}
+				$form->addElement ( "<tr>" );
+				$form->addElement ( "<th>Gesamt</th><th></th><th></th><th>" . sprintf ( "%.2f &euro;", $dbhelper->fetchPricesum ( $element ) ) . "</th><th></th><th></th></tr>\n" );
+				$form->addElement ( "</table>" );
+				if ( $closed) {
+					$form->addElement ( "<input type=\"reset\" disabled=\"disabled\" value=\"" . $this->getLang ( 'btn_closed' ) . "\" />" );
+				} else {
+					$form->addElement ( form_makeButton ( 'submit', 'show', $this->getLang ( 'btn_cancel' ) ) );
+				}
+				$form->endFieldSet ();
+				$renderer->doc .= $form->getForm ();
 			}
-			$form->addElement ( "<tr>" );
-			$form->addElement ( "<th>Gesamt</th><th></th><th></th><th>" . sprintf ( "%.2f &euro;", $dbhelper->fetchPricesum ( $_SERVER ['REMOTE_USER'] ) ) . "</th><th></th><th></th></tr>\n" );
-			$form->addElement ( "</table>" );
-			if ($this->getConf ( 'active' ) == 0 || $closed) {
-				$form->addElement ( "<input type=\"reset\" disabled=\"disabled\" value=\"" . $this->getLang ( 'btn_closed' ) . "\" />" );
-			} else {
-				$form->addElement ( form_makeButton ( 'submit', 'show', $this->getLang ( 'btn_cancel' ) ) );
-			}
-			$form->endFieldSet ();
-			$renderer->doc .= $form->getForm ();
-			
-			$res->free ();
 		}
 		
 		return true;
 	}
-	
 }
-
-// vim:ts=4:sw=4:et:

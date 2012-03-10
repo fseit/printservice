@@ -16,5 +16,3 @@ $lang['db_prefix']   = 'table prefix used in table';
 $lang['semester'] = 'The current semester, for which orders will be processed';
 $lang['active']   = 'can orders be placed or edited?';
 $lang['pagecost']   = 'Printing cost per page in cent';
-
-//Setup VIM: ex: et ts=4 :

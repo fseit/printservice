@@ -62,7 +62,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 											'id' => (( int ) $value));
 					}
 				}
-				$this->editMappings ( $data );
+				$dbhelper->editMappings ( $data );
 			}
 		} elseif (isset ( $_REQUEST ['add_lecture'] )) {
 			//add new entries
@@ -74,12 +74,12 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 									'document' => (( int ) $_REQUEST ['add_document'][$key]) );
 				}
 			}
-			$this->addMappings ( $data );
+			$dbhelper->addMappings ( $data );
 		}
 		
 		//delete
 		if (isset ( $_REQUEST ['edit_delete'] )) {
-			$this->deleteMappings ( $_REQUEST ['edit_delete'] );
+			$dbhelper->deleteMappings ( $_REQUEST ['edit_delete'] );
 		}
 	
 	}
@@ -208,5 +208,3 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 	}
 	
 }
-
-// vim:ts=4:sw=4:et:

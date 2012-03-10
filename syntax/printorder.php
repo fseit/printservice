@@ -45,8 +45,8 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 	}
 	
 	public function handle($match, $state, $pos, &$handler) {
-		$dbhelper =& plugin_load('helper','printservice_database');
-		$dbhelper->dbConnect ();
+		//$dbhelper =& plugin_load('helper','printservice_database');
+		//$dbhelper->dbConnect ();
 		return array ();
 	}
 	
@@ -58,11 +58,12 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 		//DB-Link, Semester abfragen
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();
+		
 		if ($this->getConf ( 'active' ) == 0) {
 			$renderer->doc .= "<p><div class=\"noteimportant\">" . $this->getLang ( 'note_noorder' ) . "</div></p>";
-		} elseif ($dbhelper->fetchOrderState ( $_SERVER ['REMOTE_USER'] ) == 'notfound') {
+		} elseif (($temp = $dbhelper->fetchOrderState ( $_SERVER ['REMOTE_USER'], $this->getConf ( 'semester' ) )) == 'notfound') {
 			$renderer->doc .= "<p><div class=\"noteimportant\">" . $this->getLang ( 'note_notfound' ) . "</div></p>";
-		} elseif ($dbhelper->fetchOrderState ( $_SERVER ['REMOTE_USER'] ) != 'unpaid') {
+		} elseif ($temp != 'unpaid') {
 			$renderer->doc .= "<p><div class=\"noteimportant\">" . $this->getLang ( 'note_orderfinal' ) . "</div></p>";
 		} elseif (! $res = $dbhelper->fetchCurrentDocs ()) {
 			$renderer->doc .= "<p><div class=\"notewarning\">" . $this->getLang ( 'err_noorder' ) . "</div></p>";
@@ -109,7 +110,4 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 		}
 		return true;
 	}
-	
 }
-
-// vim:ts=4:sw=4:et:

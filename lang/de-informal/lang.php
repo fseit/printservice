@@ -60,9 +60,11 @@ $lang ['tbl_orderid'] = "Bestellnr.";
 $lang ['tbl_username'] = "Nick";
 $lang ['tbl_paid'] = "Bezahlt?";
 $lang ['tbl_status'] = "Status";
-$lang ['ordered'] = "Bestellt";
+$lang ['unpaid'] = "Offen";
+$lang ['paid'] = "Bestellt";
 $lang ['printed'] = "Gedruckt";
 $lang ['delivered'] = "Abgeholt";
+$lang ['canceled'] = "Gelöscht";
 
 //printpay
 $lang ['msg_deleted'] = "Die markierten Eintr&auml;ge wurden gel&ouml;scht.";
@@ -91,5 +93,3 @@ $lang ['field_editmappings'] = "Zuordnungen bearbeiten";
 $lang ['field_editunknownmappings'] = "TODO";
 $lang ['tbl_lecturer'] = "Dozent";
 $lang ['tbl_id'] = "Id";
-
-//Setup VIM: ex: et ts=4 :

@@ -56,19 +56,17 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_username' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_pages' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_price' ) . "</th>" );
-			$form->addElement ( "<th>" . $this->getLang ( 'tbl_paid' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_status' ) . "</th>" );
 			$form->addElement ( "</tr>" );
 			while ( $row = $res->fetchRow () ) {
 				$form->addElement ( "<tr>" );
-				$form->addElement ( "<td><input type=\"radio\" name=\"userselect\" value=\"" . $row ['username'] . "\" /></td>" );
+				$form->addElement ( "<td><input type=\"radio\" name=\"orderid\" value=\"" . $row ['id'] . "\" /></td>" );
 				$form->addElement ( "<td>{$row['id']}</td>" );
 				$form->addElement ( "<td>{$row['realname']}</td>" );
 				$form->addElement ( "<td>{$row['username']}</td>" );
 				$form->addElement ( "<td>{$row['pages']}</td>" );
 				$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $row ['price'] ) . "</td>" );
-				$form->addElement ( "<td>" . ($row ['paymentstate'] == 'paid' ? 'Ja' : 'Nein') . "</td>" );
-				$form->addElement ( "<td>" . $this->getLang ( $row ['deliverystate'] ) . "</td>" );
+				$form->addElement ( "<td>" . $this->getLang ( $row ['orderstate'] ) . "</td>" );
 				$form->addElement ( "</tr>\n" );
 			}
 			$form->addElement ( "</table>" );
@@ -84,7 +82,4 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 		}
 	
 	}
-
 }
-
-// vim:ts=4:sw=4:et:
