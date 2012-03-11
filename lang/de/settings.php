@@ -16,3 +16,4 @@ $lang['db_prefix']   = 'Tabellenprefix f&uuml;r mysql-Server';
 $lang['semester'] = 'Das Semester, f&uuml;r das Bestellungen bearbeitet werden';
 $lang['active']   = 'Ist die Bestellung ge&ouml;ffnet?';
 $lang['pagecost']   = 'Druckpreis pro Seite in Cent';
+$lang['dlpath']   = 'URL-Prefix, in welchem Verzeichnis die Skripten Verfuegbar sind';

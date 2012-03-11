@@ -16,3 +16,4 @@ $meta ['db_prefix'] = array ('string' );
 $meta ['semester'] = array ('multichoice', '_choices' => array ('11ws', '12ss', '12ws', '13ss', '13ws', '14ss', '14ws', '15ss', '15ws', '16ss' ) );
 $meta ['active'] = array ('onoff' );
 $meta ['pagecost'] = array ('string' );
+$meta ['dlpath'] = array ('string' );

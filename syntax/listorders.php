@@ -91,7 +91,7 @@ class syntax_plugin_printservice_listorders extends DokuWiki_Syntax_Plugin {
 				$form->addElement ( "</tr>" );
 				foreach ( $order as $selected ) {
 					$form->addElement ( "<tr>" );
-					$form->addElement ( "<td><a href=\"{$selected['filename']}\">{$selected['title']}: {$selected['filename']}</a></td>" ); // Skript
+					$form->addElement ( "<td><a href=\"{$this->getConf ( 'db_prefix' )}{$selected['filename']}\">{$selected['title']}: {$selected['filename']}</a></td>" ); // Skript
 					$form->addElement ( "<td>" . ($selected ['format'] == "a4" ? $this->getLang ( 'tbl_a4' ) : $this->getLang ( 'tbl_a5' )) . "</td>" ); // Format
 					$form->addElement ( "<td>" . ($selected ['duplex'] == "simplex" ? $this->getLang ( 'tbl_simplex' ) : $this->getLang ( 'tbl_duplex' )) . "</td>" ); // Doppelseitig
 					$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", $selected ['price'] ) . "</td>" ); // Preis

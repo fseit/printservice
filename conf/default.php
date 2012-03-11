@@ -13,3 +13,4 @@ $conf ['db_prefix'] = 'skript_';
 $conf ['semester'] = '';
 $conf ['active'] = '0';
 $conf ['pagecost'] = '2.5';
+$conf ['dlpath'] = '';

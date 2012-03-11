@@ -87,7 +87,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 				$form->addElement ( "<td>{$row['semester']}</td>" ); //semester
 				$form->addElement ( "<td>{$row['lecturer']}</td>" ); //lecturer-name
 				$form->addElement ( "<td>{$row['name']}</td>" ); //lecture-name
-				$form->addElement ( "<td><a href=\"{$row['filename']}\">{$row['title']}</a></td>" ); //document name
+				$form->addElement ( "<td><a href=\"{$this->getConf ( 'dlpath' )}{$row['filename']}\">{$row['title']}</a></td>" ); //document name
 				$form->addElement ( "<td>{$row['pages']}</td>" ); //pages
 				$form->addElement ( "<td>" . sprintf ( "%.2f &euro;", round ( (( int ) $row ['pages'] * $this->getConf ( 'pagecost' ) + 5) / 2, - 1 ) / 50 ) . "</td>" ); //price
 				$form->addElement ( "<td><input type=\"checkbox\" name=\"orderId[]\" value=\"{$row['id']}\" /></td>" ); //order
