@@ -73,6 +73,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 			$form->startFieldSet ( $this->getLang ( 'tbl_choosedoc' ) );
 			$form->addElement ( "<table><tr>" );
 			$form->addElement ( "<th colspan=\"2\">" . $this->getLang ( 'tbl_semester' ) . "</th>" );
+			$form->addElement ( "<th>" . $this->getLang ( 'tbl_lecturer' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_lecture' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_file' ) . "</th>" );
 			$form->addElement ( "<th>" . $this->getLang ( 'tbl_pages' ) . "</th>" );
@@ -84,6 +85,7 @@ class syntax_plugin_printservice_printorder extends DokuWiki_Syntax_Plugin {
 				$form->addElement ( "<tr>" );
 				$form->addElement ( "<td>{$row['course']}</td>" ); //course
 				$form->addElement ( "<td>{$row['semester']}</td>" ); //semester
+				$form->addElement ( "<td>{$row['lecturer']}</td>" ); //lecturer-name
 				$form->addElement ( "<td>{$row['name']}</td>" ); //lecture-name
 				$form->addElement ( "<td><a href=\"{$row['filename']}\">{$row['title']}</a></td>" ); //document name
 				$form->addElement ( "<td>{$row['pages']}</td>" ); //pages

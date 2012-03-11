@@ -577,7 +577,14 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 
 	//syntax/printorder
 	function fetchCurrentDocs() {
-		$sql = 'SELECT l.course, l.semester, l.name, d.filename, d.title, d.pages, d.comment, d.id FROM `' . $this->getConf ( 'db_prefix' ) . 'mappings` m JOIN `' . $this->getConf ( 'db_prefix' ) . 'documents` d ON d.id=m.document JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=m.lecture WHERE m.semester=?';
+		$sql = 'SELECT l.course, l.semester, l.name, d.filename, d.title, d.pages, d.comment, d.id, lr.name as lecturer ';
+		$sql .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'mappings` m ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'documents` d ON d.id=m.document ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=m.lecture ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturers` lr ON lr.id=m.lecturer ';
+		$sql .= 'WHERE m.semester=? ';
+		$sql .= 'ORDER BY l.course, l.edv_id, d.filename ';
+
 		$sqldata = $this->getConf ( 'semester' );
 		$sqltype = array ('text' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
