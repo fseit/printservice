@@ -50,7 +50,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 			$delete = array ();
 			foreach ( $_REQUEST ['stornoId'] as $value ) {
 				if (is_numeric ( $value ))
-					$delete [] = ( int ) $value;
+					$delete [] = array( 'id' => ( int ) $value);
 			}
 			$dbhelper->deleteOrders ( $delete );
 			msg ( $this->getLang ( 'msg_deleted' ) );
@@ -127,7 +127,7 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 				$items = $dbhelper->fetchOrderItemsByIds ( $_REQUEST ['orderid'] );
 				$form = new Doku_Form ( array ('id' => 'myorders' ) );
 				$form->addHidden ( 'page', 'printservice_printpay' );
-				$form->addHidden ( 'userselect', hsc ( $_REQUEST ['userselect'] ) );
+				$form->addHidden ( 'orderid', hsc ( $_REQUEST ['orderid'] ) );
 				$form->startFieldSet ( "Bestellung Nr. " . $_REQUEST ['orderid'] . " im " . $dbhelper->fetchSemester ($this->getConf ( 'semester' )) );
 				$form->addElement ( "<table>\n<tr>" );
 				$form->addElement ( "<th>" . $this->getLang ( 'tbl_doc' ) . "</th>" );

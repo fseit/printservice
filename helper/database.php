@@ -282,7 +282,7 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 	
 	// admin/printpay
 	// action/printprocess mit user
-	function deleteOrders($ids, $user) {
+	function deleteOrders($ids, $user = "EIT-Admin") {
 		$this->mdb2->loadModule ( 'Extended', null, false );
 		$sql = 'UPDATE ' . $this->getConf ( 'db_prefix' ) . 'orderitems i ';
 		$sql .= 'SET i.deleted = 1 ';
@@ -303,7 +303,7 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 
 		$res = $this->mdb2->extended->executeMultiple ( $query, $ids);
 		if (PEAR::isError ( $res )) {
-			die ( "Exec7: " . $res->getMessage () );
+			die ( "Exec7: " . $res->getMessage () .$res->getDebugInfo());
 		}
 		$query->free ();
 		return true;
