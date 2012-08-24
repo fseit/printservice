@@ -93,3 +93,18 @@ $lang ['field_editmappings'] = "Zuordnungen bearbeiten";
 $lang ['field_editunknownmappings'] = "TODO";
 $lang ['tbl_lecturer'] = "Dozent";
 $lang ['tbl_id'] = "Id";
+
+//mail
+$lang ['mail_recipient'] = "Recipient";
+$lang ['mail_from'] = "Sender";
+$lang ['mail_subject'] = "Subject";
+$lang ['mail_user'] = "User";
+$lang ['mail_pw'] = "Password";
+$lang ['mail_host'] = "Mailserver";
+$lang ['mail_port'] = "Port";
+$lang ['field_mailtext'] = "Text of the eMails";
+$lang ['field_mailsettings'] = "Settings for Sending";
+$lang ['btn_mailsend'] = "Start sending";
+$lang ['mail_send'] = "send eMails";
+$lang ['mail_test'] = "Test-Mode";
+

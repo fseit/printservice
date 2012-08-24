@@ -14,3 +14,7 @@ $conf ['semester'] = '';
 $conf ['active'] = '0';
 $conf ['pagecost'] = '2.5';
 $conf ['dlpath'] = '';
+$conf ['mail_subject'] = "Skripte im [Semester]";
+$conf ["mail_host"] = 'mail.fs-eit.de';
+$conf ["mail_port"] = 25;
+

@@ -43,6 +43,7 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		return $result;
 	}
 	
+	// admin/mail
 	// admin/printmapping
 	// admin/printpay
 	// admin/printsummary
@@ -633,4 +634,77 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		$res->free ();
 		return $ids;
 	}
+	
+	//admin/mail
+	function fetchLecturersForSemester($semester) {
+		$this->mdb2->loadModule ( 'Extended', null, false );
+		$sql = 'SELECT DISTINCT l.name, l.gender, l.mail, m.lecturer ';
+		$sql .= 'FROM skript_lecturers l ';
+		$sql .= 'JOIN skript_mappings m ON m.lecturer = l.id ';
+		$sql .= 'JOIN skript_lectures le ON m.lecture = le.id ';
+		$sql .= 'WHERE m.semester = ? ';
+		$sql .= 'AND l.send_mail = 1 ';
+		//echo $dsn."\n";
+		//echo "sql25: ".$sql."\n";
+		//echo $semester."\n";
+		
+		$sqltype = array ('text' );
+		$rows = $this->mdb2->extended->getAll ( $sql, NULL, array($semester), $sqltype, MDB2_FETCHMODE_ASSOC );
+		if (PEAR::isError ( $rows )) {
+			die ( "Query25: " . $rows->getMessage () );
+		}
+		return $rows;
+	}
+	function prepareLecturesForSemester() {
+		$sql_lec = 'SELECT DISTINCT l.edv_id, l.name ';
+		$sql_lec .= 'FROM skript_lectures l ';
+		$sql_lec .= 'JOIN skript_mappings m ON m.lecture = l.id ';
+		$sql_lec .= 'WHERE m.semester = ? ';
+		$sql_lec .= 'AND m.lecturer = ? ';
+		//echo "sql_lec: ".$sql_lec."\n";
+		$sqltype_lec = array ('text', 'integer' );
+		$query_lec = & $this->mdb2->prepare ( $sql_lec, $sqltype_lec, MDB2_PREPARE_RESULT );
+		if (PEAR::isError ( $query_lec )) {
+			die ( "Prepare26Lec: " . htmlentities ( $query_lec->getMessage () ) );
+		}
+		return $query_lec;
+	}
+	function prepareDocumentsForSemester() {
+		$sql_doc = 'SELECT DISTINCT d.filename, d.title, d.author, d.update ';
+		$sql_doc .= 'FROM skript_documents d ';
+		$sql_doc .= 'JOIN skript_mappings m ON m.document = d.id ';
+		$sql_doc .= 'WHERE m.semester = ? ';
+		$sql_doc .= 'AND m.lecturer = ? ';
+		$sql_doc .= 'AND m.document > 3 ';
+		//echo "sql_doc: ".$sql_doc."\n";
+		$sqltype_doc = array ('text', 'integer' );
+		$query_doc = & $this->mdb2->prepare ( $sql_doc, $sqltype_doc, MDB2_PREPARE_RESULT );
+		if (PEAR::isError ( $query_doc )) {
+			die ( "Prepare27Doc: " . htmlentities ( $query_doc->getMessage () ) );
+		}
+		return $query_doc;
+	}
+	function fetchLecturesForSemester($query_lec, $semester, $lecturer) {
+		$res_lec = & $query_lec->execute ( array ($semester, $lecturer ) );
+		if (PEAR::isError ( $res_lec )) {
+			die ( "Exec28Lec: " . htmlentities ( $res_lec->getMessage () ) );
+		}
+		$lectures = $res_lec->fetchAll ();
+		//echo "lectures: ".print_r($lectures,true)."\n";
+		$res_lec->free ();
+		return $lectures;
+	}
+	function fetchDocumentsForSemester($query_doc, $semester, $lecturer) {
+		$res_doc = & $query_doc->execute ( array ($semester, $lecturer ) );
+		if (PEAR::isError ( $res_doc )) {
+			die ( "Exec29Doc: " . htmlentities ( $res_doc->getMessage () ) );
+		}
+		$documents = $res_doc->fetchAll ();
+		//echo "documents: ".print_r($documents,true)."\n";
+		$res_doc->free ();
+		return $documents;
+	}
+				
+				
+				
 }
