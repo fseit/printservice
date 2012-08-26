@@ -38,6 +38,10 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 		return $this->getLang ( 'menu_printpay' );
 	}
 	public function handle() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printpay")) {
+			return;
+		}
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();
 		
@@ -70,6 +74,11 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 	}
 	
 	public function html() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printpay")) {
+			ptln(hsc($this->getLang('msg_notauthorized')));
+			return;
+		}
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();
 		

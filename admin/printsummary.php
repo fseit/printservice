@@ -38,9 +38,18 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 		return $this->getLang ( 'menu_printsummary' );
 	}
 	public function handle() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printsummary")) {
+			return;
+		}
 	}
 	
 	public function html() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printsummary")) {
+			ptln(hsc($this->getLang('msg_notauthorized')));
+			return;
+		}
 		ptln ( '<h1>' . $this->getLang ( 'menu_printsummary' ) . '</h1>' );
 		
 		$dbhelper =& plugin_load('helper','printservice_database');

@@ -38,6 +38,10 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		return $this->getLang ( 'menu_printmapping' );
 	}
 	public function handle() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printmapping")) {
+			return;
+		}
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();
 		//insert
@@ -85,6 +89,11 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 	}
 	
 	public function html() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("printmapping")) {
+			ptln(hsc($this->getLang('msg_notauthorized')));
+			return;
+		}
 		ptln ( '<h1>' . $this->getLang ( 'menu_printmapping' ) . '</h1>' );
 		$dbhelper =& plugin_load('helper','printservice_database');
 		$dbhelper->dbConnect ();

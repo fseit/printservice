@@ -5,6 +5,15 @@
  * @author Florian Rinke <florian.rinke@fs-eit.de>
  */
 
+
+$meta ['_acl'] = array ('fieldset' );
+$meta ["user_printmapping"] = array ('string' );
+$meta ["user_mail"] = array ('string' );
+$meta ["user_printsummary"] = array ('string' );
+$meta ["user_printpay"] = array ('string' );
+$meta ["user_printlist"] = array ('string' );
+$meta ["user_printcover"] = array ('string' );
+$meta ['_database'] = array ('fieldset' );
 $meta ['db_server'] = array ('string' );
 $meta ['db_user'] = array ('string' );
 $meta ['db_password'] = array ('password' );

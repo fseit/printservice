@@ -9,8 +9,13 @@
 $lang ['menu_printpay'] = 'EIT Print-Service - Ausdrucke bezahlen';
 $lang ['menu_printsummary'] = 'EIT Print-Service - Bestell&uuml;bersicht';
 $lang ['menu_printmapping'] = 'EIT Print-Service - Skriptzuordnung';
+$lang ['menu_mail'] = 'EIT Print-Service - Prof-Mailing';
+$lang ['menu_printlist'] = 'EIT Print-Service - Druckliste erzeugen';
 
 // custom language strings for the plugin
+
+//auth
+$lang ['msg_notauthorized'] = "Du hast keinen Zugriff auf dieses Modul";
 
 //listorders
 $lang ['err_noshow'] = "Wegen eines technischen Fehlers kann deine Bestllung leider nicht angezeigt werden. Falls der Fehler in 5 Minuten immer noch auftritt, gib uns bitte Bescheid.";
@@ -107,4 +112,3 @@ $lang ['field_mailsettings'] = "Einstellungen für den Versand";
 $lang ['btn_mailsend'] = "Starte Versand";
 $lang ['mail_send'] = "eMails versenden";
 $lang ['mail_test'] = "Test-Modus";
-

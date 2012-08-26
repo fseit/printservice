@@ -41,6 +41,10 @@ class admin_plugin_printservice_mail extends DokuWiki_Admin_Plugin {
 		return $this->getLang ( 'menu_mail' );
 	}
 	public function handle() {
+	$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("mail")) {
+			return;
+		}
 		if (isset ( $_REQUEST ['mail_user'] )) {
 			$semester = $this->getConf ( 'semester' );
 			$dbhelper = & plugin_load ( 'helper', 'printservice_database' );
@@ -65,6 +69,11 @@ class admin_plugin_printservice_mail extends DokuWiki_Admin_Plugin {
 	}
 	
 	public function html() {
+		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
+		if(!$authhelper->isAllowed("mail")) {
+			ptln(hsc($this->getLang('msg_notauthorized')));
+			return;
+		}
 		if($this->output != "") {
 			ptln($this->output);
 		} 

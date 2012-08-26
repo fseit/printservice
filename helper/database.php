@@ -2,7 +2,6 @@
 /**
  * DokuWiki Plugin printservice (Helper Component)
  *
- * @license GPL 2 http://www.gnu.org/licenses/gpl-2.0.html
  * @author  Florian Rinke <florian.rinke@fs-eit.de>
  */
 
@@ -27,7 +26,7 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		);
 	}
 	
-	function getMethods() {
+	/*function getMethods() {
 		$result = array ();
 		$result [] = array (
 				'name' => 'getBlog', 
@@ -41,7 +40,7 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 				) 
 		);
 		return $result;
-	}
+	}*/
 	
 	// admin/mail
 	// admin/printmapping

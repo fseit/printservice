@@ -9,8 +9,13 @@
 $lang ['menu_printpay'] = 'EIT Print-Service - Pay Orders';
 $lang ['menu_printsummary'] = 'EIT Print-Service - Order Overview';
 $lang ['menu_printmapping'] = 'EIT Print-Service - Skript mapping';
+$lang ['menu_mail'] = 'EIT Print-Service - Prof-Mailing';
+$lang ['menu_printlist'] = 'EIT Print-Service - Create list of pending prints';
 
 // custom language strings for the plugin
+
+//auth
+$lang ['msg_notauthorized'] = "You are not authorized to access this module";
 
 //listorders
 $lang ['err_noshow'] = "Your order can't be shown due to a technical malfunction. If this error still occurs in 5 minutes, please notify us by email.";
@@ -107,4 +112,3 @@ $lang ['field_mailsettings'] = "Settings for Sending";
 $lang ['btn_mailsend'] = "Start sending";
 $lang ['mail_send'] = "send eMails";
 $lang ['mail_test'] = "Test-Mode";
-
