@@ -32,7 +32,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		return FIXME;
 	}
 	public function forAdminOnly() {
-		return true;
+		return false;
 	}
 	public function getMenuText() {
 		return $this->getLang ( 'menu_printmapping' );
