@@ -119,7 +119,7 @@ class admin_plugin_printservice_mail extends DokuWiki_Admin_Plugin {
 		$form->addElement ( '<td><input type="checkbox" id="mail_test" name="mail_test" checked="checked" /></td></tr>' . "\n" );
 		
 		$form->addElement ( '<tr><td><label for="mail_send">' . $this->getLang ( 'mail_send' ) . '</label></td>' );
-		$form->addElement ( '<td><input type="checkbox" id="mail_send" name="mail_send" disabled="disabled" /></td></tr>' . "\n" );
+		$form->addElement ( '<td><input type="checkbox" id="mail_send" name="mail_send" /></td></tr>' . "\n" );
 		
 		$form->addElement ( '</table>' . "\n" );
 		$form->endFieldSet ();

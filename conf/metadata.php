@@ -5,7 +5,7 @@
  * @author Florian Rinke <florian.rinke@fs-eit.de>
  */
 
-
+//ACL
 $meta ['_acl'] = array ('fieldset' );
 $meta ["user_printmapping"] = array ('string' );
 $meta ["user_mail"] = array ('string' );
@@ -13,6 +13,8 @@ $meta ["user_printsummary"] = array ('string' );
 $meta ["user_printpay"] = array ('string' );
 $meta ["user_printlist"] = array ('string' );
 $meta ["user_printcover"] = array ('string' );
+
+//database
 $meta ['_database'] = array ('fieldset' );
 $meta ['db_server'] = array ('string' );
 $meta ['db_user'] = array ('string' );
@@ -23,11 +25,13 @@ $meta ['semester'] = array ('multichoice', '_choices' => array ('11ws', '12ss', 
 $meta ['active'] = array ('onoff' );
 $meta ['pagecost'] = array ('string' );
 $meta ['dlpath'] = array ('string' );
+
+//mail
 $meta ['_mail'] = array ('fieldset' );
-$meta ['mail_text_1header'] = array('');
-$meta ['mail_text_2qLectures'] = array('');
-$meta ['mail_text_3qDocuments'] = array('');
-$meta ['mail_text_4footer'] = array('');
+$meta ['mail_text_1header'] = array('string');
+$meta ['mail_text_2qLectures'] = array('string');
+$meta ['mail_text_3qDocuments'] = array('string');
+$meta ['mail_text_4footer'] = array('string');
 $meta ['mail_recipient'] = array ('string' );
 $meta ['mail_from'] = array ('string' );
 $meta ['mail_subject'] = array ('string' );

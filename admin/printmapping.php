@@ -55,7 +55,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 										'lecturer' => (( int ) $_REQUEST ['edit_lecturer'][$key]), 
 										'document' => (( int ) $_REQUEST ['edit_document'][$key]) );
 				}
-				$this->addMappings ( $data );
+				$dbhelper->addMappings ( $data );
 			
 			} else {
 				//edit existing entries
@@ -179,7 +179,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 				$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ('btn_savemapping') ) );
 				$form->endFieldSet ();
 				$form->printForm ();
-				$unknown->free;
+				$unknown->free();
 				//edit
 				$form = new Doku_Form ( array ('id' => 'editmapping', 'method' => 'POST' ) );
 				$form->startFieldSet ( $this->getLang ('field_editmappings') );
@@ -193,6 +193,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 					$form->addElement ( '<input type="hidden" value="' . $row ['id'] . '" name="edit_id[]">' );
 					$form->addElement ( '</td><td>' );
 					$form->addElement ( hsc ( $lectures [$row ['lecture']] ) );
+					$form->addElement ( '<input type="hidden" value="' . $row ['lecture'] . '" name="edit_lecture[]">' );
 					$form->addElement ( '</td><td><select size="1" name="edit_lecturer[]">' );
 					$form->addElement ( '<option value="0">---</option>' );
 					foreach ( $lecturers as $key => $value ) {
@@ -211,7 +212,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 				$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ('btn_savemapping') ) );
 				$form->endFieldSet ();
 				$form->printForm ();
-				$mapping->free;
+				$mapping->free();
 			}
 		}
 	}

@@ -352,10 +352,11 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		return $rows;
 	}
 	function fetchMappings($semester) {
-		$sql = 'SELECT id, lecture, lecturer, document ';
-		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'mappings o ';
-		$sql .= 'WHERE semester=? ';
-		$sql .= 'ORDER BY id ';
+		$sql = 'SELECT m.id, m.lecture, m.lecturer, m.document ';
+		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'mappings m ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=m.lecture ';
+		$sql .= 'WHERE m.semester=? ';
+		$sql .= 'ORDER BY l.course, l.semester, l.edv_id ';
 		$sqldata = $semester;
 		$sqltype = array ('text' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );

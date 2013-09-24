@@ -112,3 +112,8 @@ $lang ['field_mailsettings'] = "Einstellungen für den Versand";
 $lang ['btn_mailsend'] = "Starte Versand";
 $lang ['mail_send'] = "eMails versenden";
 $lang ['mail_test'] = "Test-Modus";
+
+//printlist
+$lang ['field_listtype'] = "Art der Liste";
+$lang ['field_listaction'] = "Aktionen ausführen";
+$lang ['btn_generatelist'] = "Liste erzeugen";
