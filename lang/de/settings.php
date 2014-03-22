@@ -24,6 +24,7 @@ $lang['user_printsummary'] = "Diese User d&uuml;rfen die &Uuml;bersicht betracht
 $lang['user_printpay'] = "Diese User d&uuml;rfen Bezahlungen eintragen";
 $lang['user_printcover'] = "Diese User d&uuml;rfen Cover erzeugen";
 $lang['user_printlist'] = "Diese User d&uuml;rfen Drucklisten erzeugen";
+$lang['user_ignorelimit'] = "Diese User d&uuml;rfen trotz Limit-&Uuml;berschreitung noch Bestellungen annehmen";
 
 $lang['db_server']   = 'Adresse des mysql-Servers';
 $lang['db_user']     = 'Benutzername f&uuml;r mysql-Server';

@@ -51,6 +51,9 @@ class helper_plugin_printservice_auth extends DokuWiki_Plugin {
 			case "printmapping":
 				$allowedUsersString = $this->getConf("user_printmapping");
 				break;
+			case "lecturematerials":
+				$allowedUsersString = $this->getConf("user_lecturematerials");
+				break;
 			case "mail":
 				$allowedUsersString = $this->getConf("user_mail");
 				break;
@@ -66,6 +69,9 @@ class helper_plugin_printservice_auth extends DokuWiki_Plugin {
 			case "printcover":
 				$allowedUsersString = $this->getConf("user_printcover");
 				break;
+			case "ignorelimit":
+				 $allowedUsersString = $this->getConf("user_ignorelimit");
+				 break;
 			default:
 				return false;
 		}

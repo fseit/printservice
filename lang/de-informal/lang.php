@@ -82,6 +82,7 @@ $lang ['field_payment'] = "Bezahlung";
 $lang ['tbl_total'] = "Gesamt";
 $lang ['btn_markpaid'] = "Als bezahlt markieren";
 $lang ['msg_paid'] = "Bezahlung abgeschlossen";
+$lang ['msg_limit_reached'] = "Bestellung nicht möglich, das Limit ist erreicht!";
 
 //printprocess
 $lang ['msg_reallyclosed'] = "Die Bestellung ist wirklich gesschlossen!";

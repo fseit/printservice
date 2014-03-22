@@ -8,11 +8,13 @@
 //ACL
 $meta ['_acl'] = array ('fieldset' );
 $meta ["user_printmapping"] = array ('string' );
+$meta ["user_lecturematerials"] = array ('string' );
 $meta ["user_mail"] = array ('string' );
 $meta ["user_printsummary"] = array ('string' );
 $meta ["user_printpay"] = array ('string' );
 $meta ["user_printlist"] = array ('string' );
 $meta ["user_printcover"] = array ('string' );
+$meta ["user_ignorelimit"] = array ('string' );
 
 //database
 $meta ['_database'] = array ('fieldset' );
@@ -25,6 +27,7 @@ $meta ['semester'] = array ('multichoice', '_choices' => array ('11ws', '12ss', 
 $meta ['active'] = array ('onoff' );
 $meta ['pagecost'] = array ('string' );
 $meta ['dlpath'] = array ('string' );
+$meta ['pagelimit'] = array('numeric');
 
 //mail
 $meta ['_mail'] = array ('fieldset' );

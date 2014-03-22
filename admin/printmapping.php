@@ -15,7 +15,7 @@ if (!defined('DOKU_PLUGIN'))
 
 require_once DOKU_PLUGIN . 'admin.php';
 
-class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
+class admin_plugin_printservice_lecturematerials extends DokuWiki_Admin_Plugin {
 	
 	function getInfo() {
 		return array(
@@ -23,7 +23,7 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 				'email'  => 'florian.rinke@fs-eit.de',
 				'date'   => '2011-07-31',
 				'name'   => 'Zuordnung',
-				'desc'   => 'Verwaltet Zuordnungen Dozent-Fach-Skript',
+				'desc'   => 'Verwaltet Zuordnungen Fach-Dozent-Dokument',
 				'url'    => 'http://www.fs-eit.de',
 		);
 	}
@@ -35,11 +35,11 @@ class admin_plugin_printservice_printmapping extends DokuWiki_Admin_Plugin {
 		return false;
 	}
 	public function getMenuText() {
-		return $this->getLang ( 'menu_printmapping' );
+		return $this->getLang ( 'menu_lecturematerials' );
 	}
 	public function handle() {
 		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
-		if(!$authhelper->isAllowed("printmapping")) {
+		if(!$authhelper->isAllowed("lecturematerials")) {
 			return;
 		}
 		$dbhelper =& plugin_load('helper','printservice_database');

@@ -85,10 +85,21 @@ class admin_plugin_printservice_printsummary extends DokuWiki_Admin_Plugin {
 			
 			$res = $dbhelper->fetchOrderStats ();
 			ptln ( "<table>" );
-			ptln ( "<tr><th>" . $this->getLang ( 'tbl_pages' ) . "</th><td>{$res['pagesum']}</td></tr>" );
-			ptln ( "<tr><th>" . $this->getLang ( 'ordersum' ) . "</th><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			ptln ( "<tr><th></th><th>" . $this->getLang ( 'tbl_pages' ) . "</th><th>" . $this->getLang ( 'ordersum' ) . "</th></tr>" );
+			
+			$res = $dbhelper->fetchOrderStats ();
+			ptln ( "<tr><td>Gesamt</td><td>{$res['pagesum']}</td><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			$res = $dbhelper->fetchOrderStats ( 'unpaid' );
+			ptln ( "<tr><td>Bestellt</td><td>{$res['pagesum']}</td><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			$res = $dbhelper->fetchOrderStats ( 'paid' );
+                        ptln ( "<tr><td>Bezahlt</td><td>{$res['pagesum']}</td><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			$res = $dbhelper->fetchOrderStats ( 'printed' );
+			ptln ( "<tr><td>Gedruckt</td><td>{$res['pagesum']}</td><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			$res = $dbhelper->fetchOrderStats ( 'fetched' );
+			ptln ( "<tr><td>Abgeholt</td><td>{$res['pagesum']}</td><td>" . sprintf ( "%.2f &euro;", $res ['pricesum'] ) . "</td></tr>" );
+			$res = $dbhelper->fetchOrderStatsLimit();
+			ptln ( "<tr><th>Limit</th><td colspan=\"2\">{$res['pagesum']} / {$this->getConf ( 'pagelimit' )} Seiten</td></tr>" );
 			ptln ( "</table>" );
 		}
-	
 	}
 }

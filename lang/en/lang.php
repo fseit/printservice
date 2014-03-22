@@ -82,6 +82,7 @@ $lang ['field_payment'] = "payment";
 $lang ['tbl_total'] = "total";
 $lang ['btn_markpaid'] = "mark paid";
 $lang ['msg_paid'] = "Payment complete";
+$lang ['msg_limit_reached'] = "Cannot accept payment, limit is reached";
 
 //printprocess
 $lang ['msg_reallyclosed'] = "Ordering is really closed!";

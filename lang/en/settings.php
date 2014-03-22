@@ -24,6 +24,7 @@ $lang['user_printsummary'] = "These users are allowed to view the list of orders
 $lang['user_printpay'] = "These users are allowed to process payments";
 $lang['user_printcover'] = "These users are allowed to generate covers";
 $lang['user_printlist'] = "These users are allowed to generate lists for printing";
+$lang['user_ignorelimit'] = "These users can still enter payments after the limit was reached";
 
 $lang['db_server']   = 'address of mysql-servers';
 $lang['db_user']     = 'username used for mysql-server';

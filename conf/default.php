@@ -15,14 +15,17 @@ $conf ['semester'] = '';
 $conf ['active'] = '0';
 $conf ['pagecost'] = '2.5';
 $conf ['dlpath'] = '';
+$conf ['pagelimit'] = '50000';
 
 //ACL
 $conf ['user_printmapping'] = 'EIT-Admin';
+$conf ['user_lecturematerials'] = 'EIT-Admin';
 $conf ['user_mail'] = 'EIT-Admin';
 $conf ['user_printsummary'] = 'EIT-Admin';
 $conf ['user_printpay'] = 'EIT-Admin';
 $conf ['user_printlist'] = 'EIT-Admin';
 $conf ['user_printcover'] = 'EIT-Admin';
+$conf ['user_ignorelimit'] = 'EIT-Admin';
 
 //mail
 $conf ['mail_subject'] = "Skripte im [Semester]";

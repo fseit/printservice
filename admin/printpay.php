@@ -67,8 +67,13 @@ class admin_plugin_printservice_printpay extends DokuWiki_Admin_Plugin {
 				return;
 			}
 			//echo "pm_" . $_REQUEST ['payment'] . "_pm";
-			$dbhelper->storePayment ( $_REQUEST ['payment'] + 0 );
-			msg ( $this->getLang ( 'msg_paid' ) );
+			$res = $dbhelper->fetchOrderStatsLimit();
+                        if($res['pagesum'] <= $this->getConf ( 'pagelimit' ) || $authhelper->isAllowed("ignorelimit")) {
+				$dbhelper->storePayment ( $_REQUEST ['payment'] + 0 );
+				msg ( $this->getLang ( 'msg_paid' ) );
+			} else {
+				msg ( $this->getLang ( 'msg_limit_reached' ) );
+			}
 		}
 	
 	}

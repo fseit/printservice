@@ -78,19 +78,31 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 	
 	// admin/printmapping
 	// admin/printsummary
-	function fetchOrderStats() {
+	function fetchOrderStats($state = '*') {
 		$this->mdb2->loadModule ( 'Extended', null, false );
 		$sql = 'SELECT SUM(d.pages) as pagesum, SUM(i.price) as pricesum FROM ' . $this->getConf ( 'db_prefix' ) . 'orderitems i ';
 		$sql .= 'JOIN ' . $this->getConf ( 'db_prefix' ) . 'orders o ON o.id = i.order ';
 		$sql .= 'JOIN ' . $this->getConf ( 'db_prefix' ) . 'documents d ON d.id = i.file ';
-		$sql .= 'WHERE o.semester=? AND i.deleted=0 ';
-		$row = $this->mdb2->extended->getRow ( $sql, null, array ($this->getConf ( 'semester' ) ), array ('text' ) );
+		$sql .= 'WHERE o.semester=? AND i.deleted=0 AND o.orderstate=?';
+		$row = $this->mdb2->extended->getRow ( $sql, null, array ($this->getConf ( 'semester' ), $state ), array ('text', 'text' ) );
 		if (PEAR::isError ( $row )) {
 			die ( "Query2: " . $row->getMessage () );
 		}
 		return $row;
 	}
-	
+	 function fetchOrderStatsLimit() {
+                 $this->mdb2->loadModule ( 'Extended', null, false );
+                 $sql = 'SELECT SUM(d.pages) as pagesum, SUM(i.price) as pricesum FROM ' . $this->getConf ( 'db_prefix' ) . 'orderitems i ';
+                 $sql .= 'JOIN ' . $this->getConf ( 'db_prefix' ) . 'orders o ON o.id = i.order ';
+                 $sql .= 'JOIN ' . $this->getConf ( 'db_prefix' ) . 'documents d ON d.id = i.file ';
+		 $sql .= "WHERE o.semester=? AND i.deleted=0 AND (o.orderstate='paid' OR o.orderstate='printed'  OR o.orderstate='delivered')";
+                 $row = $this->mdb2->extended->getRow ( $sql, null, array ($this->getConf ( 'semester' )), array ('text') );
+                 if (PEAR::isError ( $row )) {
+                         die ( "Query2a: " . $row->getMessage () );
+                 }
+                 return $row;
+         }
+
 	// admin/printpay
 	// syntax/listorders
 	function fetchOrderItems($user, $semester) {
@@ -351,17 +363,16 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		}
 		return $rows;
 	}
-	function fetchMappings($semester) {
-		$sql = 'SELECT m.id, m.lecture, m.lecturer, m.document ';
-		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'mappings m ';
-		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=m.lecture ';
-		$sql .= 'WHERE m.semester=? ';
-		$sql .= 'ORDER BY l.course, l.semester, l.edv_id ';
-		$sqldata = $semester;
+	function fetchLectureMaterials() {
+		$sql = 'SELECT mat.id, mat.lecture, mat.lecturer, mat.document ';
+		$sql .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'coursemapping` cm ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturematerials` mat ON mat.id = cm.lecturematerials ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id = mat.lecture ';
+		$sql .= 'ORDER BY cm.course, cm.semester, cm.edv_id ';
 		$sqltype = array ('text' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
 		if (PEAR::isError ( $query )) {
-			echo "Prepare12: " . htmlentities ( $query->getMessage () );
+			echo "Prepare12: " . htmlentities ( $query->getMessage () ) . "<br>\n$sql<br>\n".print_r($sqldata, true)."<br>\n";
 			return false;
 		}
 		$res = $query->execute ( $sqldata );
@@ -374,16 +385,16 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		}
 		return $res;
 	}
-	function fetchUnknownMappings() {
+	function fetchUnknownLectureMaterials() {
 		$sql = 'SELECT id, lecture, lecturer, document ';
-		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'mappings o ';
-		$sql .= 'WHERE semester=? AND (document=1 OR lecturer=1) ';
+		$sql .= 'FROM ' . $this->getConf ( 'db_prefix' ) . 'lecturematerials mat ';
+		$sql .= 'WHERE (document=1 OR lecturer=1) ';
 		$sql .= 'ORDER BY id ';
 		$sqldata = $this->getConf ( 'semester' );
 		$sqltype = array ('text' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
 		if (PEAR::isError ( $query )) {
-			echo "Prepare13: " . htmlentities ( $query->getMessage () );
+			echo "Prepare13: " . htmlentities ( $query->getMessage () ) . "<br>\n$sql<br>\n".print_r($sqldata, true)."<br>\n";
 			return false;
 		}
 		$res = $query->execute ( $sqldata );
@@ -578,19 +589,21 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 
 	//syntax/printorder
 	function fetchCurrentDocs() {
-		$sql = 'SELECT l.course, l.semester, l.name, d.filename, d.title, d.pages, d.comment, d.id, lr.name as lecturer ';
-		$sql .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'mappings` m ';
-		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'documents` d ON d.id=m.document ';
-		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=m.lecture ';
-		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturers` lr ON lr.id=m.lecturer ';
-		$sql .= 'WHERE m.semester=? ';
-		$sql .= 'ORDER BY l.course, l.edv_id, d.filename ';
+		$sql = 'SELECT cm.course, cm.semester, l.name, d.filename, d.title, d.pages, d.comment, d.id, lr.name as lecturer ';
+		$sql .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'semestermapping` sm ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'coursemapping` cm ON cm.id=sm.coursemapping ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturematerials` mat ON mat.map_id= cm.lecturematerials ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'documents` d ON d.id=mat.document ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` l ON l.id=mat.lecture ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturers` lr ON lr.id=mat.lecturer ';
+		$sql .= 'WHERE sm.semester=? AND cm.noorder != 1 ';
+		$sql .= 'ORDER BY cm.course, cm.semester, cm.edv_id, d.filename';
 
 		$sqldata = $this->getConf ( 'semester' );
 		$sqltype = array ('text' );
 		$query = $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
 		if (PEAR::isError ( $query )) {
-			echo "Prepare23: " . $query->getMessage () . "<br>\n";
+			echo "Prepare23: " . $query->getMessage ();// . "<br>\n$sql<br>\n".print_r($sqldata, true)."<br>\n";
 			return false;
 		}
 		$res = $query->execute ( $sqldata );
@@ -638,12 +651,13 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 	//admin/mail
 	function fetchLecturersForSemester($semester) {
 		$this->mdb2->loadModule ( 'Extended', null, false );
-		$sql = 'SELECT DISTINCT l.name, l.gender, l.mail, m.lecturer ';
-		$sql .= 'FROM skript_lecturers l ';
-		$sql .= 'JOIN skript_mappings m ON m.lecturer = l.id ';
-		$sql .= 'JOIN skript_lectures le ON m.lecture = le.id ';
-		$sql .= 'WHERE m.semester = ? ';
-		$sql .= 'AND l.send_mail = 1 ';
+		$sql = 'SELECT DISTINCT l.name, l.gender, l.mail, mat.lecturer ';
+		$sql .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'semestermapping` sm ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'coursemapping` cm ON cm.id = sm.coursemapping ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturematerials` mat ON mat.id = cm.lecturematerials ';
+		$sql .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturers` l ON l.id = mat.lecturer ';
+		$sql .= 'WHERE sm.semester = ? ';
+		$sql .= 'AND l.send_mail =1 ';
 		//echo $dsn."\n";
 		//echo "sql25: ".$sql."\n";
 		//echo $semester."\n";
@@ -656,11 +670,14 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		return $rows;
 	}
 	function prepareLecturesForSemester() {
-		$sql_lec = 'SELECT DISTINCT l.edv_id, l.name ';
-		$sql_lec .= 'FROM skript_lectures l ';
-		$sql_lec .= 'JOIN skript_mappings m ON m.lecture = l.id ';
-		$sql_lec .= 'WHERE m.semester = ? ';
-		$sql_lec .= 'AND m.lecturer = ? ';
+		$sql_lec = 'SELECT DISTINCT cm.edv_id, lec.name ';
+		$sql_lec .= 'FROM `' . $this->getConf ( 'db_prefix' ) . 'semestermapping` sm ';
+		$sql_lec .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'coursemapping` cm ON cm.id = sm.coursemapping ';
+		$sql_lec .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturematerials` mat ON mat.id = cm.lecturematerials ';
+		//$sql_lec .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lecturers` l ON l.id = mat.lecturer ';
+		$sql_lec .= 'JOIN `' . $this->getConf ( 'db_prefix' ) . 'lectures` lec ON lec.id = mat.lecture ';
+		$sql_lec .= 'WHERE sm.semester = ? ';
+		$sql_lec .= 'AND mat.lecturer = ?';
 		//echo "sql_lec: ".$sql_lec."\n";
 		$sqltype_lec = array ('text', 'integer' );
 		$query_lec = & $this->mdb2->prepare ( $sql_lec, $sqltype_lec, MDB2_PREPARE_RESULT );
@@ -671,11 +688,13 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 	}
 	function prepareDocumentsForSemester() {
 		$sql_doc = 'SELECT DISTINCT d.filename, d.title, d.author, d.update ';
-		$sql_doc .= 'FROM skript_documents d ';
-		$sql_doc .= 'JOIN skript_mappings m ON m.document = d.id ';
-		$sql_doc .= 'WHERE m.semester = ? ';
-		$sql_doc .= 'AND m.lecturer = ? ';
-		$sql_doc .= 'AND m.document > 3 ';
+		$sql_doc .= 'FROM `skript_semestermapping` sm ';
+		$sql_doc .= 'JOIN `skript_coursemapping` cm ON cm.id = sm.coursemapping ';
+		$sql_doc .= 'JOIN `skript_lecturematerials` mat ON mat.id = cm.lecturematerials ';
+		$sql_doc .= 'JOIN `skript_documents` d ON d.id = mat.document ';
+		$sql_doc .= 'WHERE sm.semester = ? ';
+		$sql_doc .= 'AND mat.lecturer = ? ';
+		$sql_doc .= 'AND mat.document > 3';
 		//echo "sql_doc: ".$sql_doc."\n";
 		$sqltype_doc = array ('text', 'integer' );
 		$query_doc = & $this->mdb2->prepare ( $sql_doc, $sqltype_doc, MDB2_PREPARE_RESULT );
@@ -704,7 +723,57 @@ class helper_plugin_printservice_database extends DokuWiki_Plugin {
 		$res_doc->free ();
 		return $documents;
 	}
-				
-				
-				
+
+	//admin/printlist
+	function fetchCustomers($semester) {
+		$this->mdb2->loadModule ( 'Extended', null, false );
+		$sql = 'SELECT DISTINCT o.id, o.user, p.pf_realname as name ';
+		$sql .= 'FROM skript_orders o ';
+		$sql .= 'JOIN skript_orderitems i ON i.order = o.id ';
+		$sql .= 'JOIN phpbb_profile_fields_data p ON p.user_id = o.user ';
+		$sql .= 'WHERE o.semester = ? ';
+		$sql .= 'AND i.deleted = 0 ';
+		$sql .= "AND o.orderState='paid' ";
+		$sql .= 'ORDER BY SUBSTRING_INDEX( name, " ", -1 ) ';
+
+		//echo $dsn."\n";
+		//echo "sql30: ".$sql."\n";
+		//echo $semester."\n";
+
+		$sqltype = array ('text' );
+		$rows = $this->mdb2->extended->getAll ( $sql, NULL, array($semester), $sqltype, MDB2_FETCHMODE_ASSOC );
+		if (PEAR::isError ( $rows )) {
+			die ( "Query30: " . $rows->getMessage () );
+		}
+		return $rows;
+	}
+	function prepareOrdersForCustomer() {
+		$sql = 'SELECT o.id, d.title, d.pages, i.format, i.duplex, i.price, d.filename ';
+		$sql .= 'FROM `skript_orderitems` i ';
+		$sql .= 'JOIN `skript_orders` o ON o.id = i.order ';
+		$sql .= 'JOIN `skript_documents` d ON d.id = i.file ';
+		$sql .= "WHERE o.orderState = 'paid' ";
+		$sql .= 'AND i.deleted =0 ';
+		$sql .= 'AND o.semester = ? ';
+		$sql .= 'AND o.id = ? ';
+		$sql .= 'AND NOT i.file <=3 ';
+		
+		//echo "sql_item: ".$sql_item."\n";
+		$sqltype = array ('text', 'integer' );
+		$query = & $this->mdb2->prepare ( $sql, $sqltype, MDB2_PREPARE_RESULT );
+		if (PEAR::isError ( $query )) {
+			die ( "Prepare31: " . htmlentities ( $query->getMessage () ) );
+		}
+		return $query;
+	}
+	function fetchOrdersForCustomer($prep, $semester, $order) {
+		$res = & $prep->execute ( array ($semester, $order ) );
+		if (PEAR::isError ( $res )) {
+			die ( "Exec32: " . htmlentities ( $res->getMessage () ) );
+		}
+		$lectures = $res->fetchAll ();
+		//echo "lectures: ".print_r($lectures,true)."\n";
+		$res->free ();
+		return $lectures;
+	}
 }

@@ -42,7 +42,7 @@ class admin_plugin_printservice_printlist extends DokuWiki_Admin_Plugin {
 	}
 	public function handle() {
 		//error_reporting(E_ALL);
-		$this->output .= print_r($_REQUEST, true);
+		//$this->output .= print_r($_REQUEST, true);
 		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
 		if(!$authhelper->isAllowed("printlist")) {
 			$this->output .= hsc($this->getLang('msg_notauthorized'));
@@ -71,31 +71,135 @@ class admin_plugin_printservice_printlist extends DokuWiki_Admin_Plugin {
 	public function html() {
 		if($this->output != "") {
 			ptln($this->output);
+			//ptln(print_r($_REQUEST, true));
 		} 
 		$authhelper = & plugin_load ( 'helper', 'printservice_auth' );
 		if(!$authhelper->isAllowed("printlist")) {
 			ptln(hsc($this->getLang('msg_notauthorized')));
 			return;
 		}
-
+		$dbhelper =& plugin_load('helper','printservice_database');
+		$dbhelper->dbConnect ();
+		
 		ptln ( '<h1>' . $this->getLang ( 'menu_printlist' ) . '</h1>' );
 		
-		$form = new Doku_Form ( array ('id' => 'list_settings', 'method' => 'POST' ) );
-		$form->addHidden ( 'page', 'printservice_printlist' );
+		if (isset($_REQUEST['listtype'])) {
+			switch ($_REQUEST['listtype']) {
+				case "script-peruser":
+					//get customers
+					$customers = $dbhelper->fetchCustomers($this->getConf ( 'semester' ));
+					
+					//prepare items
+					$order_query = $dbhelper->prepareOrdersForCustomer();
+					
+					//echo "rows found: ".$res->numRows()."\n";
+					//echo "\n==========================================================================\n";
+					$form = new Doku_Form ( array ('id' => 'script-peruser', 'method' => 'POST' ) );
+					$form->printForm ();
+					$output = $this->bashlistStart();
+					foreach($customers as $current) {
+					//while ( $row = $res->fetchRow () ) {
+						//var_dump($current);
+						//echo "params: ".$semester." - ".$current['id']." - ".$current['user']."\n";
+						
+						//$res_item = & $query_item->execute ( array ($semester, $current ['id'] ) );
+						//if (PEAR::isError ( $res_item )) {
+						//	die ( "Exec2Item: " . htmlentities ( $res_item->getMessage () ) );
+						//}
+						//$items = $res_item->fetchAll ();
+						$items = $dbhelper->fetchOrdersForCustomer ($order_query, $this->getConf ( 'semester' ), $current['id']);
+						//echo "items: ".print_r($items,true)."\n";
+						//$res_item->free ();
+						$output .= $this->bashlist($current['id'], $current['name'], $items);
+						//echo "==========================================================================\n\n\n";
+						//print_r ( $current );
+						//break;
+					}
+					$form->addElement ( '<textarea cols="120" rows="25" name="script-peruser-text">'.$output.'</textarea>'."<br />\n");
+					$form->printForm ();
+				break;
+				case "script-perdoc":
+				break;
+				case "list-peruser":
+				break;
+				case "list-perdoc":
+				break;
+				default:
+				break;
+			};
+		} else {
 		
-		$form->startFieldSet ( $this->getLang ( 'field_listtype' ) );
-		$form->addElement ( '<input type="radio" id="type-script-peruser" name="listtype" value="script-peruser" checked="checked" /> <label for="type-script-peruser">Bash-Script, Benutzerweise</label>'."<br />\n");
-		$form->addElement ( '<input type="radio" id="type-script-perdoc" name="listtype" value="script-perdoc" /> <label for="type-script-perdoc">Bash-Script, Dokumentenweise</label>'."<br />\n");
-		$form->addElement ( '<input type="radio" id="type-list-peruser" name="listtype" value="list-peruser" /> <label for="type-list-peruser">Liste, Benutzerweise</label>'."<br />\n");
-		$form->addElement ( '<input type="radio" id="type-list-perdoc" name="listtype" value="list-perdoc" /> <label for="type-list-perdoc">Liste, Dokumentenweise</label>'."<br />\n");
-		$form->endFieldSet ();
-		
-		$form->startFieldSet ( $this->getLang ( 'field_listaction' ) );
-		$form->addElement ( '<input type="checkbox" id="action-markprinted" name="action" value="markprinted" /> <label for="action-markprinted">Als gedruckt markieren</label>')."<br />\n";
-		$form->endFieldSet ();
-		
-		$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ( 'btn_generatelist' ) ) );
-		$form->printForm ();
+			$form = new Doku_Form ( array ('id' => 'list_settings', 'method' => 'POST' ) );
+			$form->addHidden ( 'page', 'printservice_printlist' );
+			
+			$form->startFieldSet ( $this->getLang ( 'field_listtype' ) );
+			$form->addElement ( '<input type="radio" id="type-script-peruser" name="listtype" value="script-peruser" checked="checked" /> <label for="type-script-peruser">Bash-Script, Benutzerweise</label>'."<br />\n");
+			$form->addElement ( '<input type="radio" id="type-script-perdoc" name="listtype" value="script-perdoc" /> <label for="type-script-perdoc">Bash-Script, Dokumentenweise</label>'."<br />\n");
+			$form->addElement ( '<input type="radio" id="type-list-peruser" name="listtype" value="list-peruser" /> <label for="type-list-peruser">Liste, Benutzerweise</label>'."<br />\n");
+			$form->addElement ( '<input type="radio" id="type-list-perdoc" name="listtype" value="list-perdoc" /> <label for="type-list-perdoc">Liste, Dokumentenweise</label>'."<br />\n");
+			$form->endFieldSet ();
+			
+			$form->startFieldSet ( $this->getLang ( 'field_listaction' ) );
+			$form->addElement ( '<input type="checkbox" id="action-markprinted" name="action" value="markprinted" /> <label for="action-markprinted">Als gedruckt markieren</label>')."<br />\n";
+			$form->endFieldSet ();
+			
+			$form->addElement ( form_makeButton ( 'submit', 'admin', $this->getLang ( 'btn_generatelist' ) ) );
+			$form->printForm ();
+		}
+	}
+	
+	function bashlistStart() {
+		$output = '#!/bin/bash'."\n";
+		$output .= '#set -x'."\n";
+		$output .= 'printer() { lpr $@ || echo Fehler bei: $@ }'."\n";
+		$output .= 'set -e'."\n";
+		$output .= 'TOOL="echo" #lpr'."\n";
+		$output .= 'TRAY_COVER="Color"'."\n";
+		$output .= 'TRAY_DOC="Plain"'."\n";
+		$output .= 'PARAM_DEFAULT="-o AccountLogin=Custom.extern  -o AccountPassword=Custom. "'."\n";
+		$output .= 'PARAM_STAPLE="-o ARStaple=Staple5 "'."\n";
+		$output .= 'PARAM_COVER="-o MediaType=${TRAY_COVER}"'."\n";
+		$output .= 'PARAM_DOCS="-o MediaType=${TRAY_DOC}"'."\n";
+		$output .= 'PARAM_A4=""'."\n";
+		$output .= 'PARAM_A5=""'."\n";
+		$output .= 'PARAM_SIMPLEX="-o Duplex=None "'."\n";
+		$output .= 'PARAM_DUPLEX_A4="-o Duplex=DuplexNoTumble "'."\n";
+		$output .= 'PARAM_DUPLEX_A5="-o Duplex=DuplexTumble -o landscape"'."\n\n";
+		return $output;
+	}
+	function bashlist($id, $name, $items) {
+		$output = "\n#### Skripte fuer $id - $name ####\n";
+		$output .= "#sleep 5\n";
+		$output .= '$TOOL $PARAM_DEFAULT $PARAM_COVER $PARAM_A4 $PARAM_DUPLEX cover/cover-'.$id.".pdf\n";
+		foreach ( $items as $value ) {
+			$output .= '$TOOL $PARAM_DEFAULT ';
+			if($value['duplex']=="duplex") {
+				if($value['format']=="a4") {
+					$output .= '$PARAM_DUPLEX_A4 ';
+				} else {
+					$output .= '$PARAM_DUPLEX_A5 ';
+				}
+			} else {
+				$output .= '$PARAM_SIMPLEX ';
+			}
+			if($value['duplex']=='duplex' && $value['format']=='a4' && $value['pages']<=100) {
+				$output .= '$PARAM_STAPLE ';
+			} else if($value['duplex']=='duplex' && $value['format']=='a5' && $value['pages']<=200) {
+				$output .= '$PARAM_STAPLE ';
+			} else if($value['duplex']=='simplex' && $value['format']=='a4' && $value['pages']<=50) {
+				$output .= '$PARAM_STAPLE ';
+			} else if($value['duplex']=='simplex' && $value['format']=='a5' && $value['pages']<=100) {
+				$output .= '$PARAM_STAPLE ';
+			}
+			$output .= 'pdf/';
+			if($value['format']=="a4") {
+				$output .= $value['filename'];
+			} else {
+				$output .= substr($value['filename'],0,-4)."-nup.pdf";
+			}
+			$output .= "\n";
+		}
+		return $output;
 	}
 	
 }
@@ -188,62 +292,7 @@ while ( $row = $res->fetchRow () ) {
 $res->free ();
 fclose($file);
 
-function bashlistStart() {
-	global $file;
-	fwrite($file, '#!/bin/bash'."\n");
-	//fwrite($file, 'set -x'."\n");
-	fwrite($file, 'printer() { lpr $@ || echo Fehler bei: $@ }'."\n");
-	fwrite($file, 'set -e'."\n");
-	fwrite($file, 'TOOL="echo" #lpr'."\n");
-	fwrite($file, 'TRAY_COVER="Color"'."\n");
-	fwrite($file, 'TRAY_DOC="Plain"'."\n");
-	fwrite($file, 'PARAM_DEFAULT="-o AccountLogin=Custom.extern  -o AccountPassword=Custom. "'."\n");
-	fwrite($file, 'PARAM_STAPLE="-o ARStaple=Staple5 "'."\n");
-	fwrite($file, 'PARAM_COVER="-o MediaType=${TRAY_COVER}"'."\n");
-	fwrite($file, 'PARAM_DOCS="-o MediaType=${TRAY_DOC}"'."\n");
-	fwrite($file, 'PARAM_A4=""'."\n");
-	fwrite($file, 'PARAM_A5=""'."\n");
-	fwrite($file, 'PARAM_SIMPLEX="-o Duplex=None "'."\n");
-	fwrite($file, 'PARAM_DUPLEX_A4="-o Duplex=DuplexNoTumble "'."\n");
-	fwrite($file, 'PARAM_DUPLEX_A5="-o Duplex=DuplexTumble -o landscape"'."\n");
-	echo "\n";
-}
 
-function bashlist($id, $name, $items) {
-	global $file;
-	fwrite($file, "\n#### Skripte fuer $id - $name ####\n");
-	fwrite($file, "#sleep 5\n");
-	fwrite($file, '$TOOL $PARAM_DEFAULT $PARAM_COVER $PARAM_A4 $PARAM_DUPLEX cover/cover-'.$id.".pdf\n");
-	foreach ( $items as $value ) {
-		$options = '$TOOL $PARAM_DEFAULT ';
-		if($value['duplex']=="duplex") {
-			if($value['format']=="a4") {
-				$options .= '$PARAM_DUPLEX_A4 ';
-			} else {
-				$options .= '$PARAM_DUPLEX_A5 ';
-			}
-		} else {
-			$options .= '$PARAM_SIMPLEX ';
-
-		}
-		if($value['duplex']=='duplex' && $value['format']=='a4' && $value['pages']<=100) {
-			$options .= '$PARAM_STAPLE ';
-		} else if($value['duplex']=='duplex' && $value['format']=='a5' && $value['pages']<=200) {
-			$options .= '$PARAM_STAPLE ';
-		} else if($value['duplex']=='simplex' && $value['format']=='a4' && $value['pages']<=50) {
-			$options .= '$PARAM_STAPLE ';
-		} else if($value['duplex']=='simplex' && $value['format']=='a5' && $value['pages']<=100) {
-			$options .= '$PARAM_STAPLE ';
-		}
-		$options .= 'pdf/';
-		if($value['format']=="a4") {
-			$options .= $value['filename'];
-		} else {
-			$options .= substr($value['filename'],0,-4)."-nup.pdf";
-		}
-		$options .= "\n";
-		fwrite($file, $options);
-	}
 
 }
 
